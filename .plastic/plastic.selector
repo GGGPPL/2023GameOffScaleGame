@@ -1,0 +1,4 @@
+repository "J the slime@KoalaWill@cloud"
+  path "/"
+    br "/main"
+    co "/main"
