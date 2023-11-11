@@ -11,14 +11,14 @@ public class MainPlayerMovement : MonoBehaviour // player code
     public BoxCollider2D playerCOLL;
     public SpriteRenderer playerSP;
     public Transform playerTRANS;
-    public LayerMask environmentLayerMask ; // Layer for boxcast to hit
+    public LayerMask environmentLayerMask; // Layer for boxcast to hit
 
     public Vector3 idleScaleChange; // The unit of change idle animation 
     public Vector3 chargeFullScale; // The total scale player squish up to
 
     public float jumpForce; // How hard does the player gets launched 
     public float chargeTime; // How long has the player been charging
-    public float maxJumpForce; 
+    public float maxJumpForce;
     public float minJumpForce;
     public float maxChargeTime;
     public float movementScalar;
@@ -30,6 +30,7 @@ public class MainPlayerMovement : MonoBehaviour // player code
     public bool rebounding; // rebounding or not
     public bool grounded;
     public bool facingRight;
+    public bool Onjuice;
     public int jumpingDir; // 1 = right, -1 = left, 0 = static
 
     public UnityEngine.KeyCode JumpKey;
@@ -83,7 +84,7 @@ public class MainPlayerMovement : MonoBehaviour // player code
             JumpHandler();
             FlipHandler();
         }
-        if(!grounded)
+        if (!grounded)
         {
             ReboundAnimation();
             InAirMovementHandler(jumpingDir);
@@ -92,17 +93,17 @@ public class MainPlayerMovement : MonoBehaviour // player code
 
     void ChargeAnimation()
     {
-        playerTRANS.localScale = Vector3.Slerp(playerTRANS.localScale, chargeFullScale, chargeFullScale.y/maxChargeTime*Time.deltaTime);
+        playerTRANS.localScale = Vector3.Slerp(playerTRANS.localScale, chargeFullScale, chargeFullScale.y / maxChargeTime * Time.deltaTime);
     }
 
     void ReboundAnimation()
     {
         Vector3 norm = new Vector3(1f, 1f, 1f);
-        if(playerTRANS.localScale == norm)
+        if (playerTRANS.localScale == norm)
         {
             rebounding = false;
         }
-        playerTRANS.localScale = Vector3.Slerp(playerTRANS.localScale, norm, reboundScaleSpeed*Time.deltaTime);
+        playerTRANS.localScale = Vector3.Slerp(playerTRANS.localScale, norm, reboundScaleSpeed * Time.deltaTime);
     }
 
     void IdleAnimation()
@@ -146,7 +147,7 @@ public class MainPlayerMovement : MonoBehaviour // player code
             playerSP.flipX = false;
             facingRight = true;
         }
-        if (Input.GetKeyDown(LeftKey) )
+        if (Input.GetKeyDown(LeftKey))
         {
             playerSP.flipX = true;
             facingRight = false;
@@ -172,7 +173,7 @@ public class MainPlayerMovement : MonoBehaviour // player code
             }
         }
     }
-    bool CheckGrounded ()
+    bool CheckGrounded()
     {
         if (!grounded && Physics2D.BoxCast(playerCOLL.bounds.center, playerCOLL.bounds.size, 0f, Vector2.down, 0.05f, environmentLayerMask))
         {
@@ -184,11 +185,11 @@ public class MainPlayerMovement : MonoBehaviour // player code
 
     void JumpHandler() // the function for jumping 
     {
-        if(Input.GetKey(LeftKey))
+        if (Input.GetKey(LeftKey))
         {
             jumpingDir = -1;
         }
-        else if(Input.GetKey(RightKey)) 
+        else if (Input.GetKey(RightKey))
         {
             jumpingDir = 1;
         }
@@ -206,5 +207,9 @@ public class MainPlayerMovement : MonoBehaviour // player code
         }
     }
 
-
+    void OnTriggerStay2D(Collider2D other)
+    {
+        if(other.gameObject.name == "Juice") Onjuice = true;
+        else Onjuice = false;
+    }
 }
