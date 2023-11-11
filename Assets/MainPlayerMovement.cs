@@ -5,7 +5,7 @@ using System.Globalization;
 using UnityEditor.Tilemaps;
 using UnityEngine;
 
-public class MainPlayerMovement : MonoBehaviour
+public class MainPlayerMovement : MonoBehaviour // player code
 {
     public Rigidbody2D playerRB;
     public BoxCollider2D playerCOLL;
