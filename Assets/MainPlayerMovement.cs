@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Globalization;
+using UnityEditor;
 using UnityEditor.Tilemaps;
 using UnityEngine;
 
@@ -14,6 +15,7 @@ public class MainPlayerMovement : MonoBehaviour // player code
     public LayerMask environmentLayerMask; // Layer for boxcast to hit
 
     public Vector3 idleScaleChange; // The unit of change idle animation 
+    public Vector3 curNormScale;
     public Vector3 chargeFullScale; // The total scale player squish up to
 
     public float jumpForce; // How hard does the player gets launched 
@@ -26,16 +28,17 @@ public class MainPlayerMovement : MonoBehaviour // player code
     public float idleScaleSpeed; // How fast should the idle animation change
     public float reboundScaleSpeed; // Same thing for rebounding
 
-    public bool charging; // charging or not
-    public bool rebounding; // rebounding or not
+    public bool charging; // Charging or not
+    public bool rebounding; // Rebounding or not
     public bool grounded;
     public bool facingRight;
-    public bool Onjuice;
+    public bool Onjuice; // If the player is on a juice source
     public int jumpingDir; // 1 = right, -1 = left, 0 = static
 
     public UnityEngine.KeyCode JumpKey;
     public UnityEngine.KeyCode LeftKey;
     public UnityEngine.KeyCode RightKey;
+    public UnityEngine.KeyCode SuckKey;
 
     // Use this for initialization
     void Awake()
@@ -56,12 +59,14 @@ public class MainPlayerMovement : MonoBehaviour // player code
         JumpKey = KeyCode.Space;
         LeftKey = KeyCode.A;
         RightKey = KeyCode.D;
+        SuckKey = KeyCode.S;
         facingRight = true;
         idleScaleChange = new Vector3(-0.01f, -0.01f, 0);
         idleScaleSpeed = 25f;
         chargeFullScale = new Vector3(1.1f, 0.4f, 0);
         rebounding = false;
         reboundScaleSpeed = 20;
+        curNormScale = new Vector3(1f, 1f, 1f);
     }
 
 
@@ -88,6 +93,18 @@ public class MainPlayerMovement : MonoBehaviour // player code
         {
             ReboundAnimation();
             InAirMovementHandler(jumpingDir);
+        }
+        if (Onjuice)
+        {
+            GrowHandler();
+        }
+    }
+
+    void GrowHandler()
+    {
+        if (Input.GetKey(SuckKey))
+        {
+
         }
     }
 
