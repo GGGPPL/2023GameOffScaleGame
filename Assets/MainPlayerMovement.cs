@@ -16,6 +16,8 @@ public class MainPlayerMovement : MonoBehaviour // player code
 
     public Vector3 idleScaleChange; // The unit of change idle animation 
     public Vector3 curNormScale; // The current normal scale of the player
+    public Vector3 maxNormScale;
+    public Vector3 minNormScale;
     public Vector3 chargeFullScale; // The total scale player squish up to
 
     public float jumpForce; // How hard does the player gets launched 
@@ -27,6 +29,7 @@ public class MainPlayerMovement : MonoBehaviour // player code
     public float maxSpeed; // To limit horizontal movement
     public float idleScaleSpeed; // How fast should the idle animation change
     public float reboundScaleSpeed; // Same thing for rebounding
+    public float juiceAmount;
 
     public bool charging; // Charging or not
     public bool rebounding; // Rebounding or not
@@ -54,7 +57,7 @@ public class MainPlayerMovement : MonoBehaviour // player code
         minJumpForce = 20;
         maxChargeTime = 0.7f;
         movementScalar = 5f;
-        maxSpeed = 10f;
+        maxSpeed = 8f;
         environmentLayerMask = LayerMask.GetMask("Ground");
         JumpKey = KeyCode.Space;
         LeftKey = KeyCode.A;
@@ -63,10 +66,13 @@ public class MainPlayerMovement : MonoBehaviour // player code
         facingRight = true;
         idleScaleChange = new Vector3(-0.01f, -0.01f, 0);
         idleScaleSpeed = 25f;
-        chargeFullScale = new Vector3(1.1f, 0.4f, 0);
+        chargeFullScale = new Vector3(1.1f, 0.4f, 1f);
         rebounding = false;
         reboundScaleSpeed = 20;
         curNormScale = new Vector3(1f, 1f, 1f);
+        minNormScale = new Vector3(0.3f, 0.3f, 0.3f);
+        maxNormScale = new Vector3(1.4f, 1.4f, 1.4f);
+        juiceAmount = 70f;
     }
 
 
@@ -74,9 +80,12 @@ public class MainPlayerMovement : MonoBehaviour // player code
     void Update()
     {
         grounded = CheckGrounded();
+        curNormScale.x = Map(0f, 100f, minNormScale.x, maxNormScale.x, juiceAmount);
+        curNormScale.y = Map(0f, 100f, minNormScale.y, maxNormScale.y, juiceAmount);
+        curNormScale.z = Map(0f, 100f, minNormScale.z, maxNormScale.z, juiceAmount);
         if (grounded)
         {
-            ChargeHandler();
+            ChargeHandler(); // Check if the player is charging
             if (charging)
             {
                 ChargeAnimation();
@@ -86,12 +95,16 @@ public class MainPlayerMovement : MonoBehaviour // player code
                 ReboundAnimation();
             }
             else IdleAnimation();
-            JumpHandler();
-            FlipHandler();
+
+            JumpHandler(); // Scale decreases scale when player jump, also locks the player's in-air direction
+            FlipHandler(); 
         }
         if (!grounded)
         {
-            ReboundAnimation();
+            if (rebounding)
+            {
+                ReboundAnimation();
+            }
             InAirMovementHandler(jumpingDir);
         }
         if (Onjuice)
@@ -104,12 +117,16 @@ public class MainPlayerMovement : MonoBehaviour // player code
     {
         if (Input.GetKey(SuckKey))
         {
-
+            if(juiceAmount < 100f)
+            {
+                juiceAmount += 5f;
+            }
         }
     }
 
     void ChargeAnimation()
     {
+        chargeFullScale.x = curNormScale.x * 1.1f; chargeFullScale.y = curNormScale.y * 0.4f; chargeFullScale.z = curNormScale.z * 1f;
         playerTRANS.localScale = Vector3.Slerp(playerTRANS.localScale, chargeFullScale, chargeFullScale.y / maxChargeTime * Time.deltaTime);
     }
 
@@ -219,6 +236,10 @@ public class MainPlayerMovement : MonoBehaviour // player code
             {
                 playerRB.AddForce(Vector2.up * jumpForce, ForceMode2D.Impulse);
             }
+            if( juiceAmount > 0f)
+            {
+                juiceAmount -= 10f;
+            }
             rebounding = true;
         }
     }
@@ -227,5 +248,15 @@ public class MainPlayerMovement : MonoBehaviour // player code
     {
         if(other.gameObject.name == "Juice") Onjuice = true;
         else Onjuice = false;
+    }
+
+    public float Map(float OldMin, float OldMax, float NewMin, float NewMax, float OldValue)
+    {
+
+        float OldRange = (OldMax - OldMin);
+        float NewRange = (NewMax - NewMin);
+        float NewValue = (((OldValue - OldMin) * NewRange) / OldRange) + NewMin;
+
+        return (NewValue);
     }
 }
