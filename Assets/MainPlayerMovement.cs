@@ -15,7 +15,7 @@ public class MainPlayerMovement : MonoBehaviour // player code
     public LayerMask environmentLayerMask; // Layer for boxcast to hit
 
     public Vector3 idleScaleChange; // The unit of change idle animation 
-    public Vector3 curNormScale;
+    public Vector3 curNormScale; // The current normal scale of the player
     public Vector3 chargeFullScale; // The total scale player squish up to
 
     public float jumpForce; // How hard does the player gets launched 
@@ -115,21 +115,20 @@ public class MainPlayerMovement : MonoBehaviour // player code
 
     void ReboundAnimation()
     {
-        Vector3 norm = new Vector3(1f, 1f, 1f);
-        if (playerTRANS.localScale == norm)
+        if (playerTRANS.localScale == curNormScale)
         {
             rebounding = false;
         }
-        playerTRANS.localScale = Vector3.Slerp(playerTRANS.localScale, norm, reboundScaleSpeed * Time.deltaTime);
+        playerTRANS.localScale = Vector3.Slerp(playerTRANS.localScale, curNormScale, reboundScaleSpeed * Time.deltaTime);
     }
 
     void IdleAnimation()
     {
-        if (playerTRANS.localScale.y <= 1.0f)
+        if (playerTRANS.localScale.y <= curNormScale.y)
         {
             idleScaleChange = new Vector3(0.01f, 0.01f, 0);
         }
-        if (playerTRANS.localScale.y >= 1.1f)
+        if (playerTRANS.localScale.y >= curNormScale.y*1.1f)
         {
             idleScaleChange = new Vector3(-0.01f, -0.01f, 0);
         }
