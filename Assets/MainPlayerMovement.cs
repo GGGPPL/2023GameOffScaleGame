@@ -36,7 +36,8 @@ public class MainPlayerMovement : MonoBehaviour // player code
     public bool rebounding; // Rebounding or not
     public bool grounded;
     public bool facingRight;
-    public bool Onjuice; // If the player is on a juice source
+    public bool onJuice; // If the player is on a juice source
+    public bool collFloor; // whether or not is the player colliding with a floor
     public int jumpingDir; // 1 = right, -1 = left, 0 = static
 
     public UnityEngine.KeyCode JumpKey;
@@ -86,11 +87,11 @@ public class MainPlayerMovement : MonoBehaviour // player code
         curNormScale.z = Map(0f, 100f, minNormScale.z, maxNormScale.z, juiceAmount);
         
         grounded = CheckGrounded();
-        /*if(!grounded && playerRB.velocity.y == 0 && playerRB.velocity.x == 0) // Don't let boss see this, special debug usage
+        if(!grounded && playerRB.velocity.y == 0 && playerRB.velocity.x == 0) // Don't let boss see this, special debug usage
         {
             Debug.Log("YEEEEET");
-            playerTRANS.position = new Vector3(playerTRANS.position.x, playerTRANS.position.y-1f, playerTRANS.position.z);
-        } */
+            playerRB.AddForce(Vector2.down * 2, ForceMode2D.Impulse);
+        }
         if (grounded)
         {
             ChargeHandler(); // Check if the player is charging
@@ -115,7 +116,7 @@ public class MainPlayerMovement : MonoBehaviour // player code
             }
             InAirMovementHandler(jumpingDir);
         }
-        if (Onjuice)
+        if (onJuice)
         {
             GrowHandler();
         }
@@ -211,13 +212,14 @@ public class MainPlayerMovement : MonoBehaviour // player code
     }
     bool CheckGrounded()
     {
-        if (!grounded && Physics2D.BoxCast(playerCOLL.bounds.center, playerCOLL.bounds.size, 0f, Vector2.down, 0.2f, environmentLayerMask))
+        if (!grounded  && collFloor && Physics2D.BoxCast(playerCOLL.bounds.center, playerCOLL.bounds.size, 0f, Vector2.down, 0.2f, environmentLayerMask))
         {
             jumpForce = 0;
             jumpingDir = 0;
             playerRB.velocity = new Vector2(0, playerRB.velocity.y);
         }
-        return Physics2D.BoxCast(playerCOLL.bounds.center, playerCOLL.bounds.size, 0f, Vector2.down, 0.2f, environmentLayerMask);
+        
+        return (collFloor && Physics2D.BoxCast(playerCOLL.bounds.center, playerCOLL.bounds.size, 0f, Vector2.down, 0.2f, environmentLayerMask));
     }
     void JumpHandler() // the function for jumping 
     {
@@ -235,11 +237,9 @@ public class MainPlayerMovement : MonoBehaviour // player code
             grounded = false;
             charging = false;
             chargeTime = 0;
-            if (jumpForce > 0)
-            {
-                playerTRANS.position = new Vector3(playerTRANS.position.x, playerTRANS.position.y + 0.3f, playerTRANS.position.z); 
-                playerRB.AddForce(Vector2.up * jumpForce, ForceMode2D.Impulse);
-            }
+            collFloor = false;
+            playerTRANS.position = new Vector3(playerTRANS.position.x, playerTRANS.position.y + 0.3f, playerTRANS.position.z); 
+            playerRB.AddForce(Vector2.up * jumpForce, ForceMode2D.Impulse);
             if( juiceAmount > 0f)
             {
                 juiceAmount -= 10f;
@@ -247,10 +247,23 @@ public class MainPlayerMovement : MonoBehaviour // player code
             rebounding = true;
         }
     }
-    void OnTriggerStay2D(Collider2D other)
+    void OnTriggerStay2D(Collider2D collision)
     {
-        if(other.gameObject.tag == "Juice") Onjuice = true;
-        else Onjuice = false;
+        if (collision.gameObject.tag == "Juice") onJuice = true;
+        if (collision.gameObject.tag == "Juice") onJuice = true;
+    }
+    void OnCollisionEnter2D(Collision2D collision)
+    {
+        //Debug.Log(collision.gameObject.tag);
+        if(collision.gameObject.tag == "Ground" && collision.gameObject.transform.position.y < playerTRANS.position.y)
+        {
+            //Debug.Log("cool");
+            collFloor = true;
+        }
+    }
+    private void OnTriggerExit2D(Collider2D collision)
+    {
+        if (collision.gameObject.tag == "Juice") onJuice = false;
     }
     public float Map(float OldMin, float OldMax, float NewMin, float NewMax, float OldValue)
     {
