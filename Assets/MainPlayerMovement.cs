@@ -90,7 +90,7 @@ public class MainPlayerMovement : MonoBehaviour // player code
         if(!grounded && playerRB.velocity.y == 0 && playerRB.velocity.x == 0) // Don't let boss see this, special debug usage
         {
             Debug.Log("YEEEEET");
-            playerRB.AddForce(Vector2.down * 2, ForceMode2D.Impulse);
+            playerRB.AddForce(Vector2.up * 3, ForceMode2D.Impulse);
         }
         if (grounded)
         {
@@ -158,24 +158,27 @@ public class MainPlayerMovement : MonoBehaviour // player code
     }
     void InAirMovementHandler(int jumpingDir)
     {
-        if (jumpingDir == 1) // jumping to the right
+        //if (!CheckGrounded())
         {
-            if (playerRB.velocity.x != xSpeed)
+            if (jumpingDir == 1) // jumping to the right
             {
-                playerRB.velocity = new Vector2(xSpeed, playerRB.velocity.y);
-                // Vector2 movement = new Vector2(jumpingDir, 0);
-                // playerRB.AddForce(movementScalar * movement);
+                if (playerRB.velocity.x != xSpeed)
+                {
+                    playerRB.velocity = new Vector2(xSpeed, playerRB.velocity.y);
+                    // Vector2 movement = new Vector2(jumpingDir, 0);
+                    // playerRB.AddForce(movementScalar * movement);
+                }
             }
-        }
-        else if (jumpingDir == -1) // jumping to the left
-        {
-            if (playerRB.velocity.x != -xSpeed)
+            else if (jumpingDir == -1) // jumping to the left
             {
-                playerRB.velocity = new Vector2(-xSpeed, playerRB.velocity.y);
-                // Vector2 movement = new Vector2(jumpingDir, 0);
-                // playerRB.AddForce(movementScalar * movement);
+                if (playerRB.velocity.x != -xSpeed)
+                {
+                    playerRB.velocity = new Vector2(-xSpeed, playerRB.velocity.y);
+                    // Vector2 movement = new Vector2(jumpingDir, 0);
+                    // playerRB.AddForce(movementScalar * movement);
 
-            }
+                }
+            } 
         }
     }
     void FlipHandler()
@@ -232,7 +235,7 @@ public class MainPlayerMovement : MonoBehaviour // player code
             jumpingDir = 1; 
         }
         else { jumpingDir = 0; }
-        if (Input.GetKeyUp(JumpKey)) // If the player is currently charging but the jump key is released, jump
+        if (Input.GetKeyUp(JumpKey) && chargeTime > 0.06) // If the player is currently charging but the jump key is released, jump
         {
             grounded = false;
             charging = false;
@@ -255,11 +258,27 @@ public class MainPlayerMovement : MonoBehaviour // player code
     void OnCollisionEnter2D(Collision2D collision)
     {
         //Debug.Log(collision.gameObject.tag);
-        if(collision.gameObject.tag == "Ground" && collision.gameObject.transform.position.y < playerTRANS.position.y)
+        if(collision.gameObject.tag == "Ground" /*&& collision.gameObject.transform.position.y < playerTRANS.position.y*/)
         {
             //Debug.Log("cool");
             collFloor = true;
         }
+        //if (collFloor && playerRB.velocity.y !=0) // bump to side
+        //{
+        //    jumpingDir = -jumpingDir;
+        //}
+    }
+    private void OnCollisionExit2D(Collision2D collision)
+    {
+        if (collision.gameObject.tag == "Ground" /*&& collision.gameObject.transform.position.y < playerTRANS.position.y*/)
+        {
+            //Debug.Log("cool");
+            collFloor = false;
+        }
+        //if (collFloor && playerRB.velocity.y != 0) // bump to side
+        //{
+        //    jumpingDir = -jumpingDir;
+        //}
     }
     private void OnTriggerExit2D(Collider2D collision)
     {
