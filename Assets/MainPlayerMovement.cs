@@ -57,7 +57,7 @@ public class MainPlayerMovement : MonoBehaviour // player code
         minJumpForce = 20;
         maxChargeTime = 0.7f;
         movementScalar = 5f;
-        maxSpeed = 8f;
+        maxSpeed = 6f;
         environmentLayerMask = LayerMask.GetMask("Ground");
         JumpKey = KeyCode.Space;
         LeftKey = KeyCode.A;
