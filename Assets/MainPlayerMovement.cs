@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Globalization;
+using Unity.VisualScripting;
 using UnityEditor;
 using UnityEditor.Tilemaps;
 using UnityEngine;
@@ -25,8 +26,8 @@ public class MainPlayerMovement : MonoBehaviour // player code
     public float maxJumpForce;
     public float minJumpForce;
     public float maxChargeTime;
-    public float movementScalar;
-    public float maxSpeed; // To limit horizontal movement
+    // public float movementScalar;
+    public float xSpeed; // To limit horizontal movement
     public float idleScaleSpeed; // How fast should the idle animation change
     public float reboundScaleSpeed; // Same thing for rebounding
     public float juiceAmount;
@@ -56,8 +57,8 @@ public class MainPlayerMovement : MonoBehaviour // player code
         maxJumpForce = 55;
         minJumpForce = 20;
         maxChargeTime = 0.7f;
-        movementScalar = 5f;
-        maxSpeed = 6f;
+        // movementScalar = 5f;
+        xSpeed = 6f;
         environmentLayerMask = LayerMask.GetMask("Ground");
         JumpKey = KeyCode.Space;
         LeftKey = KeyCode.A;
@@ -79,10 +80,17 @@ public class MainPlayerMovement : MonoBehaviour // player code
     // Update is called once per frame for physics
     void Update()
     {
-        grounded = CheckGrounded();
+        // map the current normal scale according to the juice amount
         curNormScale.x = Map(0f, 100f, minNormScale.x, maxNormScale.x, juiceAmount);
         curNormScale.y = Map(0f, 100f, minNormScale.y, maxNormScale.y, juiceAmount);
         curNormScale.z = Map(0f, 100f, minNormScale.z, maxNormScale.z, juiceAmount);
+        
+        grounded = CheckGrounded();
+        /*if(!grounded && playerRB.velocity.y == 0 && playerRB.velocity.x == 0) // Don't let boss see this, special debug usage
+        {
+            Debug.Log("YEEEEET");
+            playerTRANS.position = new Vector3(playerTRANS.position.x, playerTRANS.position.y-1f, playerTRANS.position.z);
+        } */
         if (grounded)
         {
             ChargeHandler(); // Check if the player is charging
@@ -112,7 +120,6 @@ public class MainPlayerMovement : MonoBehaviour // player code
             GrowHandler();
         }
     }
-
     void GrowHandler()
     {
         if (Input.GetKey(SuckKey))
@@ -123,13 +130,11 @@ public class MainPlayerMovement : MonoBehaviour // player code
             }
         }
     }
-
     void ChargeAnimation()
     {
         chargeFullScale.x = curNormScale.x * 1.1f; chargeFullScale.y = curNormScale.y * 0.4f; chargeFullScale.z = curNormScale.z * 1f;
         playerTRANS.localScale = Vector3.Slerp(playerTRANS.localScale, chargeFullScale, chargeFullScale.y / maxChargeTime * Time.deltaTime);
     }
-
     void ReboundAnimation()
     {
         if (playerTRANS.localScale == curNormScale)
@@ -138,7 +143,6 @@ public class MainPlayerMovement : MonoBehaviour // player code
         }
         playerTRANS.localScale = Vector3.Slerp(playerTRANS.localScale, curNormScale, reboundScaleSpeed * Time.deltaTime);
     }
-
     void IdleAnimation()
     {
         if (playerTRANS.localScale.y <= curNormScale.y)
@@ -151,28 +155,28 @@ public class MainPlayerMovement : MonoBehaviour // player code
         }
         playerTRANS.localScale += idleScaleChange * idleScaleSpeed * Time.deltaTime;
     }
-
     void InAirMovementHandler(int jumpingDir)
     {
-        if (jumpingDir == 1)
+        if (jumpingDir == 1) // jumping to the right
         {
-            if (playerRB.velocity.magnitude < maxSpeed)
+            if (playerRB.velocity.x != xSpeed)
             {
-                Vector2 movement = new Vector2(jumpingDir, 0);
-                playerRB.AddForce(movementScalar * movement);
+                playerRB.velocity = new Vector2(xSpeed, playerRB.velocity.y);
+                // Vector2 movement = new Vector2(jumpingDir, 0);
+                // playerRB.AddForce(movementScalar * movement);
             }
         }
-        else if (jumpingDir == -1)
+        else if (jumpingDir == -1) // jumping to the left
         {
-            if (playerRB.velocity.magnitude < maxSpeed)
+            if (playerRB.velocity.x != -xSpeed)
             {
-                Vector2 movement = new Vector2(jumpingDir, 0);
-                playerRB.AddForce(movementScalar * movement);
+                playerRB.velocity = new Vector2(-xSpeed, playerRB.velocity.y);
+                // Vector2 movement = new Vector2(jumpingDir, 0);
+                // playerRB.AddForce(movementScalar * movement);
 
             }
         }
     }
-
     void FlipHandler()
     {
         if (Input.GetKey(RightKey))
@@ -186,7 +190,6 @@ public class MainPlayerMovement : MonoBehaviour // player code
             facingRight = false;
         }
     }
-
     void ChargeHandler()
     {
         // If the plauer is grounded and it is the first tiem jump key changes to presssed, start charging
@@ -208,14 +211,14 @@ public class MainPlayerMovement : MonoBehaviour // player code
     }
     bool CheckGrounded()
     {
-        if (!grounded && Physics2D.BoxCast(playerCOLL.bounds.center, playerCOLL.bounds.size, 0f, Vector2.down, 0.05f, environmentLayerMask))
+        if (!grounded && Physics2D.BoxCast(playerCOLL.bounds.center, playerCOLL.bounds.size, 0f, Vector2.down, 0.2f, environmentLayerMask))
         {
             jumpForce = 0;
             jumpingDir = 0;
+            playerRB.velocity = new Vector2(0, playerRB.velocity.y);
         }
-        return Physics2D.BoxCast(playerCOLL.bounds.center, playerCOLL.bounds.size, 0f, Vector2.down, 0.05f, environmentLayerMask);
+        return Physics2D.BoxCast(playerCOLL.bounds.center, playerCOLL.bounds.size, 0f, Vector2.down, 0.2f, environmentLayerMask);
     }
-
     void JumpHandler() // the function for jumping 
     {
         if (Input.GetKey(LeftKey))
@@ -224,7 +227,7 @@ public class MainPlayerMovement : MonoBehaviour // player code
         }
         else if (Input.GetKey(RightKey))
         {
-            jumpingDir = 1;
+            jumpingDir = 1; 
         }
         else { jumpingDir = 0; }
         if (Input.GetKeyUp(JumpKey)) // If the player is currently charging but the jump key is released, jump
@@ -234,6 +237,7 @@ public class MainPlayerMovement : MonoBehaviour // player code
             chargeTime = 0;
             if (jumpForce > 0)
             {
+                playerTRANS.position = new Vector3(playerTRANS.position.x, playerTRANS.position.y + 0.3f, playerTRANS.position.z); 
                 playerRB.AddForce(Vector2.up * jumpForce, ForceMode2D.Impulse);
             }
             if( juiceAmount > 0f)
@@ -243,13 +247,11 @@ public class MainPlayerMovement : MonoBehaviour // player code
             rebounding = true;
         }
     }
-
     void OnTriggerStay2D(Collider2D other)
     {
-        if(other.gameObject.name == "Juice") Onjuice = true;
+        if(other.gameObject.tag == "Juice") Onjuice = true;
         else Onjuice = false;
     }
-
     public float Map(float OldMin, float OldMax, float NewMin, float NewMax, float OldValue)
     {
 

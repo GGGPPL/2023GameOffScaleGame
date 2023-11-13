@@ -1713,7 +1713,7 @@ Transform:
   m_GameObject: {fileID: 503855316}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -6.11, y: 5.58, z: 0}
+  m_LocalPosition: {x: -5.2, y: 5.58, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -1830,7 +1830,7 @@ BoxCollider2D:
   m_IsTrigger: 0
   m_UsedByEffector: 0
   m_UsedByComposite: 0
-  m_Offset: {x: 0, y: 0}
+  m_Offset: {x: 0.00293684, y: 0.012332201}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0.5, y: 0.5}
@@ -1841,7 +1841,7 @@ BoxCollider2D:
     adaptiveTiling: 0
   m_AutoTiling: 0
   serializedVersion: 2
-  m_Size: {x: 1.8, y: 1.55}
+  m_Size: {x: 1.9115963, y: 1.5958171}
   m_EdgeRadius: 0
 --- !u!114 &503855321
 MonoBehaviour:
@@ -1863,24 +1863,29 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 8
   idleScaleChange: {x: 0, y: 0, z: 0}
+  curNormScale: {x: 0, y: 0, z: 0}
+  maxNormScale: {x: 0, y: 0, z: 0}
+  minNormScale: {x: 0, y: 0, z: 0}
   chargeFullScale: {x: 0, y: 0, z: 0}
-  jumpForce: 20
+  jumpForce: 50
   chargeTime: 0
   maxJumpForce: 30
   minJumpForce: 0
   maxChargeTime: 2.5
-  movementScalar: 0
-  maxSpeed: 0
+  xSpeed: 0
   idleScaleSpeed: 0
   reboundScaleSpeed: 0
+  juiceAmount: 0
   charging: 0
   rebounding: 0
   grounded: 1
   facingRight: 0
+  Onjuice: 0
   jumpingDir: 0
   JumpKey: 32
   LeftKey: 0
   RightKey: 0
+  SuckKey: 0
 --- !u!1 &519420028
 GameObject:
   m_ObjectHideFlags: 0
@@ -1968,7 +1973,7 @@ Transform:
   m_GameObject: {fileID: 519420028}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: -10}
+  m_LocalPosition: {x: -0.1, y: 0, z: -10}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -2081,7 +2086,7 @@ GameObject:
   - component: {fileID: 723184845}
   m_Layer: 6
   m_Name: Juice
-  m_TagString: Untagged
+  m_TagString: Juice
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
