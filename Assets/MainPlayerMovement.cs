@@ -4,6 +4,7 @@ using System.Collections.Specialized;
 using System.Globalization;
 using Unity.VisualScripting;
 using UnityEditor;
+using UnityEditor.Sprites;
 using UnityEditor.Tilemaps;
 using UnityEngine;
 
@@ -87,11 +88,6 @@ public class MainPlayerMovement : MonoBehaviour // player code
         curNormScale.z = Map(0f, 100f, minNormScale.z, maxNormScale.z, juiceAmount);
         
         grounded = CheckGrounded();
-        if(!grounded && playerRB.velocity.y == 0 && playerRB.velocity.x == 0) // Don't let boss see this, special debug usage
-        {
-            Debug.Log("YEEEEET");
-            playerRB.AddForce(Vector2.up * 3, ForceMode2D.Impulse);
-        }
         if (grounded)
         {
             ChargeHandler(); // Check if the player is charging
@@ -255,12 +251,12 @@ public class MainPlayerMovement : MonoBehaviour // player code
         if (collision.gameObject.tag == "Juice") onJuice = true;
         if (collision.gameObject.tag == "Juice") onJuice = true;
     }
-    void OnCollisionEnter2D(Collision2D collision)
+    void OnCollisionStay2D(Collision2D collision)
     {
         //Debug.Log(collision.gameObject.tag);
-        if(collision.gameObject.tag == "Ground" /*&& collision.gameObject.transform.position.y < playerTRANS.position.y*/)
+        if (collision.gameObject.tag == "Ground" && collision.gameObject.transform.position.y < playerTRANS.position.y)
         {
-            //Debug.Log("cool");
+            Debug.Log((playerTRANS.position - collision.gameObject.transform.position).normalized);
             collFloor = true;
         }
         //if (collFloor && playerRB.velocity.y !=0) // bump to side
@@ -268,18 +264,7 @@ public class MainPlayerMovement : MonoBehaviour // player code
         //    jumpingDir = -jumpingDir;
         //}
     }
-    private void OnCollisionExit2D(Collision2D collision)
-    {
-        if (collision.gameObject.tag == "Ground" /*&& collision.gameObject.transform.position.y < playerTRANS.position.y*/)
-        {
-            //Debug.Log("cool");
-            collFloor = false;
-        }
-        //if (collFloor && playerRB.velocity.y != 0) // bump to side
-        //{
-        //    jumpingDir = -jumpingDir;
-        //}
-    }
+    
     private void OnTriggerExit2D(Collider2D collision)
     {
         if (collision.gameObject.tag == "Juice") onJuice = false;
