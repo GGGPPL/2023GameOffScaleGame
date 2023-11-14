@@ -1881,8 +1881,8 @@ MonoBehaviour:
   grounded: 1
   facingRight: 0
   onJuice: 0
-  collFloor: 0
   jumpingDir: 0
+  collFloorDir: 0
   JumpKey: 32
   LeftKey: 0
   RightKey: 0
@@ -1992,7 +1992,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ce2cf6d3d9cb1754d9c8b0b8b2bb07d7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  FollowSpeed: 2
+  FollowSpeed: 5
   yOffset: 1
   targetTRANS: {fileID: 0}
   target: {fileID: 0}

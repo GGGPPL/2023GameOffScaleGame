@@ -27,7 +27,6 @@ public class MainPlayerMovement : MonoBehaviour // player code
     public float maxJumpForce;
     public float minJumpForce;
     public float maxChargeTime;
-    // public float movementScalar;
     public float xSpeed; // To limit horizontal movement
     public float idleScaleSpeed; // How fast should the idle animation change
     public float reboundScaleSpeed; // Same thing for rebounding
@@ -61,7 +60,6 @@ public class MainPlayerMovement : MonoBehaviour // player code
         maxJumpForce = 70;
         minJumpForce = 20;
         maxChargeTime = 1f;
-        // movementScalar = 5f;
         xSpeed = 6f;
         environmentLayerMask = LayerMask.GetMask("Ground");
         JumpKey = KeyCode.Space;
@@ -156,28 +154,20 @@ public class MainPlayerMovement : MonoBehaviour // player code
     }
     void InAirMovementHandler(int jumpingDir)
     {
-        //if (!CheckGrounded())
+        if (jumpingDir == 1) // jumping to the right
         {
-            if (jumpingDir == 1) // jumping to the right
+            if (playerRB.velocity.x != xSpeed)
             {
-                if (playerRB.velocity.x != xSpeed)
-                {
-                    playerRB.velocity = new Vector2(xSpeed, playerRB.velocity.y);
-                    // Vector2 movement = new Vector2(jumpingDir, 0);
-                    // playerRB.AddForce(movementScalar * movement);
-                }
+                playerRB.velocity = new Vector2(xSpeed, playerRB.velocity.y);
             }
-            else if (jumpingDir == -1) // jumping to the left
-            {
-                if (playerRB.velocity.x != -xSpeed)
-                {
-                    playerRB.velocity = new Vector2(-xSpeed, playerRB.velocity.y);
-                    // Vector2 movement = new Vector2(jumpingDir, 0);
-                    // playerRB.AddForce(movementScalar * movement);
-
-                }
-            } 
         }
+        else if (jumpingDir == -1) // jumping to the left
+        {
+            if (playerRB.velocity.x != -xSpeed)
+            {
+                playerRB.velocity = new Vector2(-xSpeed, playerRB.velocity.y);
+            }
+        } 
     }
     void FlipHandler()
     {
@@ -257,16 +247,11 @@ public class MainPlayerMovement : MonoBehaviour // player code
     void OnTriggerStay2D(Collider2D collision)
     {
         if (collision.gameObject.tag == "Juice") onJuice = true;
-        if (collision.gameObject.tag == "Juice") onJuice = true;
     }
     void OnCollisionStay2D(Collision2D collision)
     {
-        //Debug.Log(collision.gameObject.tag);
         if (collision.gameObject.tag == "Ground" )
         {
-            //Debug.Log((playerTRANS.position - collision.gameObject.transform.position).normalized);
-            //Debug.Log(Vector3.up);
-            //Debug.Log(Vector3.down);
             if (Physics2D.BoxCast(playerCOLL.bounds.center, playerCOLL.bounds.size, 0f, Vector2.down, 0.2f, environmentLayerMask))
             {
                 collFloorDir = 'D';
