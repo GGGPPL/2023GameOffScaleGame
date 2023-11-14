@@ -58,9 +58,9 @@ public class MainPlayerMovement : MonoBehaviour // player code
         jumpForce = 0;
         charging = false;
         grounded = false;
-        maxJumpForce = 55;
+        maxJumpForce = 70;
         minJumpForce = 20;
-        maxChargeTime = 0.7f;
+        maxChargeTime = 1f;
         // movementScalar = 5f;
         xSpeed = 6f;
         environmentLayerMask = LayerMask.GetMask("Ground");
@@ -233,15 +233,21 @@ public class MainPlayerMovement : MonoBehaviour // player code
             jumpingDir = 1; 
         }
         else { jumpingDir = 0; }
+
         if (Input.GetKeyUp(JumpKey) && chargeTime > 0.06) // If the player is currently charging but the jump key is released, jump
         {
             grounded = false;
             charging = false;
             chargeTime = 0;
             collFloorDir = 'N';
-            playerTRANS.position = new Vector3(playerTRANS.position.x, playerTRANS.position.y + 0.3f, playerTRANS.position.z); 
-            playerRB.AddForce(Vector2.up * jumpForce, ForceMode2D.Impulse);
-            if( juiceAmount > 0f)
+            playerTRANS.position = new Vector3(playerTRANS.position.x, playerTRANS.position.y + 0.3f, playerTRANS.position.z);
+
+            if (jumpForce > minJumpForce + 0.04f)
+            {
+                playerRB.AddForce(Vector2.up * jumpForce * curNormScale.x, ForceMode2D.Impulse);
+            }
+            else playerRB.AddForce(Vector2.up * jumpForce, ForceMode2D.Impulse);
+            if ( juiceAmount > 0f)
             {
                 juiceAmount -= 10f;
             }
