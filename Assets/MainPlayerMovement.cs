@@ -31,6 +31,7 @@ public class MainPlayerMovement : MonoBehaviour // player code
     public float idleScaleSpeed; // How fast should the idle animation change
     public float reboundScaleSpeed; // Same thing for rebounding
     public float juiceAmount;
+    public float suckTimer;
 
     public bool charging; // Charging or not
     public bool rebounding; // Rebounding or not
@@ -82,6 +83,16 @@ public class MainPlayerMovement : MonoBehaviour // player code
     // Update is called once per frame for physics
     void Update()
     {
+        suckTimer += Time.deltaTime;
+        if (suckTimer >= 0.1f)
+        {
+            suckTimer = suckTimer % 0.1f;
+            if (onJuice)
+            {
+                GrowHandler();
+            }
+        }
+
         // map the current normal scale according to the juice amount
         curNormScale.x = Map(0f, 100f, minNormScale.x, maxNormScale.x, juiceAmount);
         curNormScale.y = Map(0f, 100f, minNormScale.y, maxNormScale.y, juiceAmount);
@@ -112,10 +123,7 @@ public class MainPlayerMovement : MonoBehaviour // player code
             }
             InAirMovementHandler(jumpingDir);
         }
-        if (onJuice)
-        {
-            GrowHandler();
-        }
+        
     }
     void GrowHandler()
     {
