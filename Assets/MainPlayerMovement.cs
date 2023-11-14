@@ -38,8 +38,10 @@ public class MainPlayerMovement : MonoBehaviour // player code
     public bool grounded;
     public bool facingRight;
     public bool onJuice; // If the player is on a juice source
-    public bool collFloor; // whether or not is the player colliding with a floor
+
     public int jumpingDir; // 1 = right, -1 = left, 0 = static
+
+    public char collFloorDir; // the direction the player collides with the floor (R, L, U, D) (N = NULL)
 
     public UnityEngine.KeyCode JumpKey;
     public UnityEngine.KeyCode LeftKey;
@@ -211,14 +213,14 @@ public class MainPlayerMovement : MonoBehaviour // player code
     }
     bool CheckGrounded()
     {
-        if (!grounded  && collFloor && Physics2D.BoxCast(playerCOLL.bounds.center, playerCOLL.bounds.size, 0f, Vector2.down, 0.2f, environmentLayerMask))
+        if (!grounded && collFloorDir == 'D' && Physics2D.BoxCast(playerCOLL.bounds.center, playerCOLL.bounds.size, 0f, Vector2.down, 0.2f, environmentLayerMask))
         {
             jumpForce = 0;
             jumpingDir = 0;
             playerRB.velocity = new Vector2(0, playerRB.velocity.y);
         }
         
-        return (collFloor && Physics2D.BoxCast(playerCOLL.bounds.center, playerCOLL.bounds.size, 0f, Vector2.down, 0.2f, environmentLayerMask));
+        return (collFloorDir == 'D' && Physics2D.BoxCast(playerCOLL.bounds.center, playerCOLL.bounds.size, 0f, Vector2.down, 0.2f, environmentLayerMask));
     }
     void JumpHandler() // the function for jumping 
     {
@@ -236,7 +238,7 @@ public class MainPlayerMovement : MonoBehaviour // player code
             grounded = false;
             charging = false;
             chargeTime = 0;
-            collFloor = false;
+            collFloorDir = 'N';
             playerTRANS.position = new Vector3(playerTRANS.position.x, playerTRANS.position.y + 0.3f, playerTRANS.position.z); 
             playerRB.AddForce(Vector2.up * jumpForce, ForceMode2D.Impulse);
             if( juiceAmount > 0f)
@@ -254,15 +256,34 @@ public class MainPlayerMovement : MonoBehaviour // player code
     void OnCollisionStay2D(Collision2D collision)
     {
         //Debug.Log(collision.gameObject.tag);
-        if (collision.gameObject.tag == "Ground" && collision.gameObject.transform.position.y < playerTRANS.position.y)
+        if (collision.gameObject.tag == "Ground" )
         {
-            Debug.Log((playerTRANS.position - collision.gameObject.transform.position).normalized);
-            collFloor = true;
+            //Debug.Log((playerTRANS.position - collision.gameObject.transform.position).normalized);
+            //Debug.Log(Vector3.up);
+            //Debug.Log(Vector3.down);
+            if (Physics2D.BoxCast(playerCOLL.bounds.center, playerCOLL.bounds.size, 0f, Vector2.down, 0.2f, environmentLayerMask))
+            {
+                collFloorDir = 'D';
+                Debug.Log("The ground is below me.");
+            }
+            if (Physics2D.BoxCast(playerCOLL.bounds.center, playerCOLL.bounds.size, 0f, Vector2.up, 0.2f, environmentLayerMask))
+            {
+                collFloorDir = 'U';
+                Debug.Log("The ground is above me.");
+            }
+            if (Physics2D.BoxCast(playerCOLL.bounds.center, playerCOLL.bounds.size, 0f, Vector2.left, 0.2f, environmentLayerMask))
+            {
+                collFloorDir = 'L';
+                jumpingDir = 1;
+                Debug.Log("The ground is on my left.");
+            }
+            if (Physics2D.BoxCast(playerCOLL.bounds.center, playerCOLL.bounds.size, 0f, Vector2.right, 0.2f, environmentLayerMask))
+            {
+                collFloorDir = 'R';
+                jumpingDir = -1;
+                Debug.Log("The ground is on my right.");
+            }
         }
-        //if (collFloor && playerRB.velocity.y !=0) // bump to side
-        //{
-        //    jumpingDir = -jumpingDir;
-        //}
     }
     
     private void OnTriggerExit2D(Collider2D collision)
