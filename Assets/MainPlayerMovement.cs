@@ -125,6 +125,10 @@ public class MainPlayerMovement : MonoBehaviour // player code
             {
                 ReboundAnimation();
             }
+            else
+            {
+                IdleAnimation();
+            }
             InAirMovementHandler(jumpingDir);
         }
 
@@ -219,14 +223,14 @@ public class MainPlayerMovement : MonoBehaviour // player code
     }
     bool CheckGrounded()
     {
-        if (!grounded && collFloorDir == 'D' && Physics2D.BoxCast(playerCOLL.bounds.center, playerCOLL.bounds.size, 0f, Vector2.down, 0.2f, environmentLayerMask))
+        if (!grounded && collFloorDir == 'D' && Physics2D.BoxCast(playerCOLL.bounds.center, playerCOLL.bounds.size, 0f, Vector2.down, 0.05f, environmentLayerMask))
         {
             jumpForce = 0;
             jumpingDir = 0;
             playerRB.velocity = new Vector2(0, playerRB.velocity.y);
         }
         
-        return (collFloorDir == 'D' && Physics2D.BoxCast(playerCOLL.bounds.center, playerCOLL.bounds.size, 0f, Vector2.down, 0.2f, environmentLayerMask));
+        return (collFloorDir == 'D' && Physics2D.BoxCast(playerCOLL.bounds.center, playerCOLL.bounds.size, 0f, Vector2.down, 0.05f, environmentLayerMask));
     }
     void JumpHandler() // the function for jumping 
     {
@@ -266,7 +270,7 @@ public class MainPlayerMovement : MonoBehaviour // player code
     {
         if (collision.gameObject.tag == "Ground" )
         {
-            if (Physics2D.BoxCast(playerCOLL.bounds.center, playerCOLL.bounds.size, 0f, Vector2.down, 0.2f, environmentLayerMask))
+            if (Physics2D.BoxCast(playerCOLL.bounds.center, playerCOLL.bounds.size, 0f, Vector2.down, 0.05f, environmentLayerMask))
             {
                 collFloorDir = 'D';
                 if (juiceAmount > 0f && canDecrease)
@@ -277,20 +281,22 @@ public class MainPlayerMovement : MonoBehaviour // player code
                 }
                 Debug.Log("The ground is below me.");
             }
-            else if (Physics2D.BoxCast(playerCOLL.bounds.center, playerCOLL.bounds.size, 0f, Vector2.up, 0.2f, environmentLayerMask))
+            else if (Physics2D.BoxCast(playerCOLL.bounds.center, playerCOLL.bounds.size, 0f, Vector2.up, 0.05f, environmentLayerMask))
             {
                 collFloorDir = 'U';
             }
-            else if (Physics2D.BoxCast(playerCOLL.bounds.center, playerCOLL.bounds.size, 0f, Vector2.left, 0.2f, environmentLayerMask))
+            else if (Physics2D.BoxCast(playerCOLL.bounds.center, playerCOLL.bounds.size, 0f, Vector2.left, 0.05f, environmentLayerMask))
             {
                 collFloorDir = 'L';
+                playerTRANS.position = new Vector3(playerTRANS.position.x + 0.1f, playerTRANS.position.y, playerTRANS.position.z);
                 jumpingDir = 1;
                 xSpeed -= 4;
                 Debug.Log("The ground is on my left.");
             }
-            else if (Physics2D.BoxCast(playerCOLL.bounds.center, playerCOLL.bounds.size, 0f, Vector2.right, 0.2f, environmentLayerMask))
+            else if (Physics2D.BoxCast(playerCOLL.bounds.center, playerCOLL.bounds.size, 0f, Vector2.right, 0.05f, environmentLayerMask))
             {
                 collFloorDir = 'R';
+                playerTRANS.position = new Vector3(playerTRANS.position.x - 0.1f, playerTRANS.position.y, playerTRANS.position.z);
                 jumpingDir = -1;
                 xSpeed -= 4;
                 Debug.Log("The ground is on my right.");
