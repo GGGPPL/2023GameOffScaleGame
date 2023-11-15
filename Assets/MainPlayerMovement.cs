@@ -211,12 +211,16 @@ public class MainPlayerMovement : MonoBehaviour // player code
     }
     void ChargeHandler()
     {
-        // If the plauer is grounded and it is the first tiem jump key changes to presssed, start charging
-        if (Input.GetKeyDown(JumpKey))
+        if(!Input.GetKey(JumpKey))
+        {
+            charging = false;
+            chargeTime = 0f;
+        }
+        else if (Input.GetKey(JumpKey) && !charging)// If the plauer is grounded and it is the first time jump key changes to presssed, start charging
         {
             // Starting the jump charge and set charge time to zero, also stop rebounding
             charging = true;
-            chargeTime = 0;
+            chargeTime = 0f;
             rebounding = false;
         }
         else if (charging && Input.GetKey(JumpKey)) // Keep track of the charging time
@@ -291,6 +295,10 @@ public class MainPlayerMovement : MonoBehaviour // player code
             else if (Physics2D.BoxCast(playerCOLL.bounds.center, playerCOLL.bounds.size, 0f, Vector2.up, 0.05f, environmentLayerMask))
             {
                 collFloorDir = 'U';
+                if (playerRB.velocity.y >0)
+                {
+                    playerRB.velocity = new Vector2(playerRB.velocity.x, -playerRB.velocity.y);
+                }
             }
             else if (Physics2D.BoxCast(playerCOLL.bounds.center, playerCOLL.bounds.size, 0f, Vector2.left, 0.05f, environmentLayerMask))
             {
