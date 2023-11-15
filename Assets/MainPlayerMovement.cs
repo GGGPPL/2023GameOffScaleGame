@@ -31,7 +31,7 @@ public class MainPlayerMovement : MonoBehaviour // player code
     public float idleScaleSpeed; // How fast should the idle animation change
     public float reboundScaleSpeed; // Same thing for rebounding
     public float juiceAmount;
-    public float suckTimer;
+    public float suckSpeed; //  Suck juice per second
 
     public bool charging; // Charging or not
     public bool rebounding; // Rebounding or not
@@ -41,7 +41,7 @@ public class MainPlayerMovement : MonoBehaviour // player code
 
     public int jumpingDir; // 1 = right, -1 = left, 0 = static
 
-    public char collFloorDir; // the direction the player collides with the floor (R, L, U, D) (N = NULL)
+    public char collFloorDir; // The direction the player collides with the floor (R, L, U, D) (N = NULL)
 
     public UnityEngine.KeyCode JumpKey;
     public UnityEngine.KeyCode LeftKey;
@@ -77,28 +77,20 @@ public class MainPlayerMovement : MonoBehaviour // player code
         minNormScale = new Vector3(0.3f, 0.3f, 0.3f);
         maxNormScale = new Vector3(1.4f, 1.4f, 1.4f);
         juiceAmount = 70f;
+        suckSpeed = 50f;
     }
 
 
     // Update is called once per frame for physics
     void Update()
     {
-        suckTimer += Time.deltaTime;
-        if (suckTimer >= 0.1f)
-        {
-            suckTimer = suckTimer % 0.1f;
-            if (onJuice)
-            {
-                GrowHandler();
-            }
-        }
-
         // map the current normal scale according to the juice amount
         curNormScale.x = Map(0f, 100f, minNormScale.x, maxNormScale.x, juiceAmount);
         curNormScale.y = Map(0f, 100f, minNormScale.y, maxNormScale.y, juiceAmount);
         curNormScale.z = Map(0f, 100f, minNormScale.z, maxNormScale.z, juiceAmount);
         
         grounded = CheckGrounded();
+
         if (grounded)
         {
             ChargeHandler(); // Check if the player is charging
@@ -123,7 +115,11 @@ public class MainPlayerMovement : MonoBehaviour // player code
             }
             InAirMovementHandler(jumpingDir);
         }
-        
+
+        if (onJuice)
+        {
+            GrowHandler();
+        }
     }
     void GrowHandler()
     {
@@ -131,7 +127,7 @@ public class MainPlayerMovement : MonoBehaviour // player code
         {
             if(juiceAmount < 100f)
             {
-                juiceAmount += 5f;
+                juiceAmount += (suckSpeed * Time.deltaTime);
             }
         }
     }
@@ -232,7 +228,7 @@ public class MainPlayerMovement : MonoBehaviour // player code
         }
         else { jumpingDir = 0; }
 
-        if (Input.GetKeyUp(JumpKey) && chargeTime > 0.06) // If the player is currently charging but the jump key is released, jump
+        if (Input.GetKey(JumpKey) == false && charging && chargeTime > 0.06) // If the player is currently charging but the jump key is released, jump
         {
             grounded = false;
             charging = false;
@@ -265,18 +261,18 @@ public class MainPlayerMovement : MonoBehaviour // player code
                 collFloorDir = 'D';
                 Debug.Log("The ground is below me.");
             }
-            if (Physics2D.BoxCast(playerCOLL.bounds.center, playerCOLL.bounds.size, 0f, Vector2.up, 0.2f, environmentLayerMask))
+            else if (Physics2D.BoxCast(playerCOLL.bounds.center, playerCOLL.bounds.size, 0f, Vector2.up, 0.2f, environmentLayerMask))
             {
                 collFloorDir = 'U';
                 Debug.Log("The ground is above me.");
             }
-            if (Physics2D.BoxCast(playerCOLL.bounds.center, playerCOLL.bounds.size, 0f, Vector2.left, 0.2f, environmentLayerMask))
+            else if (Physics2D.BoxCast(playerCOLL.bounds.center, playerCOLL.bounds.size, 0f, Vector2.left, 0.2f, environmentLayerMask))
             {
                 collFloorDir = 'L';
                 jumpingDir = 1;
                 Debug.Log("The ground is on my left.");
             }
-            if (Physics2D.BoxCast(playerCOLL.bounds.center, playerCOLL.bounds.size, 0f, Vector2.right, 0.2f, environmentLayerMask))
+            else if (Physics2D.BoxCast(playerCOLL.bounds.center, playerCOLL.bounds.size, 0f, Vector2.right, 0.2f, environmentLayerMask))
             {
                 collFloorDir = 'R';
                 jumpingDir = -1;
