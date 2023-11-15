@@ -242,10 +242,6 @@ public class MainPlayerMovement : MonoBehaviour // player code
                 playerRB.AddForce(Vector2.up * jumpForce * curNormScale.x, ForceMode2D.Impulse);
             }
             else playerRB.AddForce(Vector2.up * jumpForce, ForceMode2D.Impulse);
-            if ( juiceAmount > 0f)
-            {
-                juiceAmount -= 10f;
-            }
             rebounding = true;
         }
     }
@@ -260,6 +256,10 @@ public class MainPlayerMovement : MonoBehaviour // player code
             if (Physics2D.BoxCast(playerCOLL.bounds.center, playerCOLL.bounds.size, 0f, Vector2.down, 0.2f, environmentLayerMask))
             {
                 collFloorDir = 'D';
+                if (juiceAmount > 0f)
+                {
+                    juiceAmount -= 10f;
+                }
                 Debug.Log("The ground is below me.");
             }
             else if (Physics2D.BoxCast(playerCOLL.bounds.center, playerCOLL.bounds.size, 0f, Vector2.up, 0.2f, environmentLayerMask))
