@@ -38,6 +38,7 @@ public class MainPlayerMovement : MonoBehaviour // player code
     public bool grounded;
     public bool facingRight;
     public bool onJuice; // If the player is on a juice source
+    public bool canDecrease; // To prevent the player from keep decreasing in size
 
     public int jumpingDir; // 1 = right, -1 = left, 0 = static
 
@@ -78,6 +79,7 @@ public class MainPlayerMovement : MonoBehaviour // player code
         maxNormScale = new Vector3(1.4f, 1.4f, 1.4f);
         juiceAmount = 70f;
         suckSpeed = 50f;
+        canDecrease = false;
     }
 
 
@@ -235,6 +237,8 @@ public class MainPlayerMovement : MonoBehaviour // player code
             charging = false;
             chargeTime = 0;
             collFloorDir = 'N';
+            rebounding = true;
+            canDecrease = true;
             playerTRANS.position = new Vector3(playerTRANS.position.x, playerTRANS.position.y + 0.3f, playerTRANS.position.z);
 
             if (jumpForce > minJumpForce + 0.04f)
@@ -242,7 +246,6 @@ public class MainPlayerMovement : MonoBehaviour // player code
                 playerRB.AddForce(Vector2.up * jumpForce * curNormScale.x, ForceMode2D.Impulse);
             }
             else playerRB.AddForce(Vector2.up * jumpForce, ForceMode2D.Impulse);
-            rebounding = true;
         }
     }
     void OnTriggerStay2D(Collider2D collision)
@@ -256,8 +259,9 @@ public class MainPlayerMovement : MonoBehaviour // player code
             if (Physics2D.BoxCast(playerCOLL.bounds.center, playerCOLL.bounds.size, 0f, Vector2.down, 0.2f, environmentLayerMask))
             {
                 collFloorDir = 'D';
-                if (juiceAmount > 0f)
+                if (juiceAmount > 0f && canDecrease)
                 {
+                    canDecrease = false;
                     juiceAmount -= 10f;
                 }
                 Debug.Log("The ground is below me.");
