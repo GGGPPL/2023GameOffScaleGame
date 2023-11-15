@@ -7,6 +7,7 @@ using UnityEditor;
 using UnityEditor.Sprites;
 using UnityEditor.Tilemaps;
 using UnityEngine;
+using static Unity.VisualScripting.Metadata;
 
 public class MainPlayerMovement : MonoBehaviour // player code
 {
@@ -15,6 +16,7 @@ public class MainPlayerMovement : MonoBehaviour // player code
     public SpriteRenderer playerSP;
     public Transform playerTRANS;
     public LayerMask environmentLayerMask; // Layer for boxcast to hit
+    public ParticleSystem playerGroundSamsh;
 
     public Vector3 idleScaleChange; // The unit of change idle animation 
     public Vector3 curNormScale; // The current normal scale of the player
@@ -80,6 +82,13 @@ public class MainPlayerMovement : MonoBehaviour // player code
         juiceAmount = 70f;
         suckSpeed = 50f;
         canDecrease = false;
+        foreach (Transform child in transform)
+        {
+            if (child.tag == "Visuals")
+            {
+                playerGroundSamsh = child.gameObject.GetComponent<ParticleSystem>();
+            }
+        }
     }
 
 
@@ -261,6 +270,7 @@ public class MainPlayerMovement : MonoBehaviour // player code
                 collFloorDir = 'D';
                 if (juiceAmount > 0f && canDecrease)
                 {
+                    playerGroundSamsh.Play();
                     canDecrease = false;
                     juiceAmount -= 10f;
                 }
