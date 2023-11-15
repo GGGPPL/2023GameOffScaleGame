@@ -211,12 +211,7 @@ public class MainPlayerMovement : MonoBehaviour // player code
     }
     void ChargeHandler()
     {
-        if(!Input.GetKey(JumpKey))
-        {
-            charging = false;
-            chargeTime = 0f;
-        }
-        else if (Input.GetKey(JumpKey) && !charging)// If the plauer is grounded and it is the first time jump key changes to presssed, start charging
+        if (Input.GetKey(JumpKey) && !charging)// If the plauer is grounded and it is the first time jump key changes to presssed, start charging
         {
             // Starting the jump charge and set charge time to zero, also stop rebounding
             charging = true;
