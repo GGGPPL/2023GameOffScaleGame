@@ -1,0 +1,7 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" xsi="http://www.w3.org/2001/XMLSchema-instance" engine="UnityEngine.UIElements" editor="UnityEditor.UIElements" noNamespaceSchemaLocation="../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
+    <Style src="project://database/Assets/style.uss?fileID=7433441132597879392&amp;guid=ad9fb057a26bb3342941ab15bb065285&amp;type=3#style" />
+    <ui:VisualElement style="flex-grow: 1; position: absolute; height: 100px; width: 300px; top: 980px; left: 10px; bottom: auto; align-items: flex-start; justify-content: center;">
+        <ui:Label tabindex="-1" text="Loading..." parse-escape-sequences="true" display-tooltip-when-elided="true" style="font-size: 35px; -unity-font: url(&apos;project://database/Assets/Fonts/MinecraftRegular-Bmg3.otf?fileID=12800000&amp;guid=752d11aaefd96e146b8bcfc56ade0a67&amp;type=3#MinecraftRegular-Bmg3&apos;); -unity-font-definition: url(&apos;project://database/Assets/Fonts/MinecraftRegular-Bmg3%20SDF.asset?fileID=11400000&amp;guid=21da8da7eab422f49b978ce92cd82dae&amp;type=2#MinecraftRegular-Bmg3 SDF&apos;);" />
+        <ui:ProgressBar value="22" name="loadingProgressBar" style="width: 200px; height: auto;" />
+    </ui:VisualElement>
+</ui:UXML>
