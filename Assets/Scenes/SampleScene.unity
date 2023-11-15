@@ -1716,7 +1716,8 @@ Transform:
   m_LocalPosition: {x: -5.2, y: 5.58, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
-  m_Children: []
+  m_Children:
+  - {fileID: 822078180}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!212 &503855318
@@ -1862,6 +1863,7 @@ MonoBehaviour:
   environmentLayerMask:
     serializedVersion: 2
     m_Bits: 8
+  playerGroundSamsh: {fileID: 0}
   idleScaleChange: {x: 0, y: 0, z: 0}
   curNormScale: {x: 0, y: 0, z: 0}
   maxNormScale: {x: 0, y: 0, z: 0}
@@ -1876,11 +1878,13 @@ MonoBehaviour:
   idleScaleSpeed: 0
   reboundScaleSpeed: 0
   juiceAmount: 0
+  suckSpeed: 0
   charging: 0
   rebounding: 0
   grounded: 1
   facingRight: 0
   onJuice: 0
+  canDecrease: 0
   jumpingDir: 0
   collFloorDir: 99
   JumpKey: 32
@@ -2216,12 +2220,12 @@ GameObject:
   - component: {fileID: 822078179}
   - component: {fileID: 822078178}
   m_Layer: 0
-  m_Name: Particle System
-  m_TagString: Untagged
+  m_Name: PlayerGroundSmash
+  m_TagString: Visuals
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!199 &822078178
 ParticleSystemRenderer:
   serializedVersion: 6
@@ -2302,14 +2306,14 @@ ParticleSystem:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 822078177}
   serializedVersion: 8
-  lengthInSec: 5
-  simulationSpeed: 1
+  lengthInSec: 1
+  simulationSpeed: 6.8
   stopAction: 0
   cullingMode: 0
   ringBufferMode: 0
   ringBufferLoopRange: {x: 0, y: 1}
   emitterVelocityMode: 1
-  looping: 1
+  looping: 0
   prewarm: 0
   playOnAwake: 1
   useUnscaledTime: 0
@@ -2377,7 +2381,7 @@ ParticleSystem:
     startLifetime:
       serializedVersion: 2
       minMaxState: 0
-      scalar: 5
+      scalar: 1
       minScalar: 5
       maxCurve:
         serializedVersion: 2
@@ -2430,7 +2434,7 @@ ParticleSystem:
     startSpeed:
       serializedVersion: 2
       minMaxState: 0
-      scalar: 5
+      scalar: 7
       minScalar: 5
       maxCurve:
         serializedVersion: 2
@@ -2926,7 +2930,7 @@ ParticleSystem:
     serializedVersion: 6
     enabled: 1
     type: 4
-    angle: 25
+    angle: 54.234173
     length: 5
     boxThickness: {x: 0, y: 0, z: 0}
     radiusThickness: 1
@@ -3012,7 +3016,7 @@ ParticleSystem:
     sphericalDirectionAmount: 0
     randomPositionAmount: 0
     radius:
-      value: 1
+      value: 3.1445606
       mode: 0
       spread: 0
       speed:
@@ -7025,12 +7029,12 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 822078177}
   serializedVersion: 2
-  m_LocalRotation: {x: -0.7071068, y: 0, z: 0, w: 0.7071068}
-  m_LocalPosition: {x: 0.8111022, y: 6.0280204, z: 0.061977055}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalRotation: {x: -0.7071068, y: -0, z: -0, w: 0.7071068}
+  m_LocalPosition: {x: -0.01999998, y: -1.06, z: 0.06}
+  m_LocalScale: {x: 0.3, y: 0.3, z: 0.3}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 0}
+  m_Father: {fileID: 503855317}
   m_LocalEulerAnglesHint: {x: -90, y: 0, z: 0}
 --- !u!1 &977025695
 GameObject:
@@ -7319,4 +7323,3 @@ SceneRoots:
   - {fileID: 1418266838}
   - {fileID: 723184847}
   - {fileID: 1035161775}
-  - {fileID: 822078180}
