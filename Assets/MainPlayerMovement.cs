@@ -54,6 +54,11 @@ public class MainPlayerMovement : MonoBehaviour // player code
     // Use this for initialization
     void Awake()
     {
+        JumpKey = SettingsUILogic.instance.jumpKey;
+        LeftKey = SettingsUILogic.instance.leftKey;
+        RightKey = SettingsUILogic.instance.rightKey;
+        SuckKey = SettingsUILogic.instance.interactKey;
+
         playerTRANS = GetComponent<Transform>();
         playerCOLL = GetComponent<BoxCollider2D>();
         playerRB = GetComponent<Rigidbody2D>();
@@ -66,10 +71,6 @@ public class MainPlayerMovement : MonoBehaviour // player code
         maxChargeTime = 1f;
         xSpeed = 6f;
         environmentLayerMask = LayerMask.GetMask("Ground");
-        JumpKey = KeyCode.Space;
-        LeftKey = KeyCode.A;
-        RightKey = KeyCode.D;
-        SuckKey = KeyCode.S;
         facingRight = true;
         idleScaleChange = new Vector3(-0.01f, -0.01f, 0);
         idleScaleSpeed = 25f;
@@ -272,27 +273,26 @@ public class MainPlayerMovement : MonoBehaviour // player code
                 {
                     playerGroundSamsh.Play();
                     canDecrease = false;
-                    juiceAmount -= 10f;
+                    juiceAmount -= 5f;
                 }
                 Debug.Log("The ground is below me.");
             }
             else if (Physics2D.BoxCast(playerCOLL.bounds.center, playerCOLL.bounds.size, 0f, Vector2.up, 0.2f, environmentLayerMask))
             {
                 collFloorDir = 'U';
-                Debug.Log("The ground is above me.");
             }
             else if (Physics2D.BoxCast(playerCOLL.bounds.center, playerCOLL.bounds.size, 0f, Vector2.left, 0.2f, environmentLayerMask))
             {
                 collFloorDir = 'L';
                 jumpingDir = 1;
-                xSpeed -= 1;
+                xSpeed -= 4;
                 Debug.Log("The ground is on my left.");
             }
             else if (Physics2D.BoxCast(playerCOLL.bounds.center, playerCOLL.bounds.size, 0f, Vector2.right, 0.2f, environmentLayerMask))
             {
                 collFloorDir = 'R';
                 jumpingDir = -1;
-                xSpeed -= 1;
+                xSpeed -= 4;
                 Debug.Log("The ground is on my right.");
             }
         }
