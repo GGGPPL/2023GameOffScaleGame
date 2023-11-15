@@ -230,6 +230,7 @@ public class MainPlayerMovement : MonoBehaviour // player code
 
         if (Input.GetKey(JumpKey) == false && charging && chargeTime > 0.06) // If the player is currently charging but the jump key is released, jump
         {
+            xSpeed = 6f;
             grounded = false;
             charging = false;
             chargeTime = 0;
@@ -270,12 +271,14 @@ public class MainPlayerMovement : MonoBehaviour // player code
             {
                 collFloorDir = 'L';
                 jumpingDir = 1;
+                xSpeed -= 1;
                 Debug.Log("The ground is on my left.");
             }
             else if (Physics2D.BoxCast(playerCOLL.bounds.center, playerCOLL.bounds.size, 0f, Vector2.right, 0.2f, environmentLayerMask))
             {
                 collFloorDir = 'R';
                 jumpingDir = -1;
+                xSpeed -= 1;
                 Debug.Log("The ground is on my right.");
             }
         }
