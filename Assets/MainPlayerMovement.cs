@@ -125,10 +125,7 @@ public class MainPlayerMovement : MonoBehaviour // player code
             {
                 ReboundAnimation();
             }
-            else
-            {
-                IdleAnimation();
-            }
+
             InAirMovementHandler(jumpingDir);
         }
 
@@ -176,14 +173,24 @@ public class MainPlayerMovement : MonoBehaviour // player code
     {
         if (jumpingDir == 1) // jumping to the right
         {
-            if (playerRB.velocity.x != xSpeed)
+            if (xSpeed < 0)
+            {
+                xSpeed = 0;
+                playerRB.velocity = new Vector2(0, playerRB.velocity.y);
+            }
+            else if (playerRB.velocity.x != xSpeed)
             {
                 playerRB.velocity = new Vector2(xSpeed, playerRB.velocity.y);
             }
         }
         else if (jumpingDir == -1) // jumping to the left
         {
-            if (playerRB.velocity.x != -xSpeed)
+            if (xSpeed < 0)
+            {
+                xSpeed = 0;
+                playerRB.velocity = new Vector2(0, playerRB.velocity.y);
+            }
+            else if (playerRB.velocity.x != -xSpeed)
             {
                 playerRB.velocity = new Vector2(-xSpeed, playerRB.velocity.y);
             }
@@ -288,17 +295,17 @@ public class MainPlayerMovement : MonoBehaviour // player code
             else if (Physics2D.BoxCast(playerCOLL.bounds.center, playerCOLL.bounds.size, 0f, Vector2.left, 0.05f, environmentLayerMask))
             {
                 collFloorDir = 'L';
-                playerTRANS.position = new Vector3(playerTRANS.position.x + 0.1f, playerTRANS.position.y, playerTRANS.position.z);
+                //playerTRANS.position = new Vector3(playerTRANS.position.x + 0.1f, playerTRANS.position.y, playerTRANS.position.z);
                 jumpingDir = 1;
-                xSpeed -= 4;
+                xSpeed -= 2;
                 Debug.Log("The ground is on my left.");
             }
             else if (Physics2D.BoxCast(playerCOLL.bounds.center, playerCOLL.bounds.size, 0f, Vector2.right, 0.05f, environmentLayerMask))
             {
                 collFloorDir = 'R';
-                playerTRANS.position = new Vector3(playerTRANS.position.x - 0.1f, playerTRANS.position.y, playerTRANS.position.z);
+                //playerTRANS.position = new Vector3(playerTRANS.position.x - 0.1f, playerTRANS.position.y, playerTRANS.position.z);
                 jumpingDir = -1;
-                xSpeed -= 4;
+                xSpeed -= 2;
                 Debug.Log("The ground is on my right.");
             }
         }
