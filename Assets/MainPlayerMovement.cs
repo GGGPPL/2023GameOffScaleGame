@@ -243,7 +243,10 @@ public class MainPlayerMovement : MonoBehaviour // player code
     }
     void LandHandler()
     {
-        CreateSplash(); // makes the little puddel of juice when landing
+        if(canDecrease)
+        {
+            CreateSplash(); // makes the little puddle of juice when landing
+        }
         jumpForce = 0;
         jumpingDir = 0;
         playerRB.velocity = new Vector2(0, playerRB.velocity.y);
