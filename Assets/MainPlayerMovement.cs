@@ -17,6 +17,7 @@ public class MainPlayerMovement : MonoBehaviour // player code
     public Transform playerTRANS;
     public LayerMask environmentLayerMask; // Layer for boxcast to hit
     public ParticleSystem playerGroundSamsh;
+    public GameObject LandingSplash;
 
     public Vector3 idleScaleChange; // The unit of change idle animation 
     public Vector3 curNormScale; // The current normal scale of the player
@@ -34,12 +35,14 @@ public class MainPlayerMovement : MonoBehaviour // player code
     public float reboundScaleSpeed; // Same thing for rebounding
     public float juiceAmount;
     public float suckSpeed; //  Suck juice per second
+    public float decreasePerJump;
 
     public bool charging; // Charging or not
     public bool rebounding; // Rebounding or not
     public bool grounded;
     public bool facingRight;
     public bool onJuice; // If the player is on a juice source
+    public bool onTempJuice; // If the player is on a temp pud of juice that can be sucked back
     public bool canDecrease; // To prevent the player from keep decreasing in size
 
     public int jumpingDir; // 1 = right, -1 = left, 0 = static
@@ -63,14 +66,16 @@ public class MainPlayerMovement : MonoBehaviour // player code
         playerCOLL = GetComponent<BoxCollider2D>();
         playerRB = GetComponent<Rigidbody2D>();
         playerSP = GetComponent<SpriteRenderer>();
-        jumpForce = 0;
+        LandingSplash = GameObject.FindGameObjectWithTag("Splashed juice");
+        environmentLayerMask = LayerMask.GetMask("Ground");
+
         charging = false;
         grounded = false;
+        jumpForce = 0;
         maxJumpForce = 70;
         minJumpForce = 20;
         maxChargeTime = 1f;
         xSpeed = 6f;
-        environmentLayerMask = LayerMask.GetMask("Ground");
         facingRight = true;
         idleScaleChange = new Vector3(-0.01f, -0.01f, 0);
         idleScaleSpeed = 25f;
@@ -82,6 +87,7 @@ public class MainPlayerMovement : MonoBehaviour // player code
         maxNormScale = new Vector3(1.4f, 1.4f, 1.4f);
         juiceAmount = 70f;
         suckSpeed = 50f;
+        decreasePerJump = 5f;
         canDecrease = false;
         foreach (Transform child in transform)
         {
@@ -91,8 +97,6 @@ public class MainPlayerMovement : MonoBehaviour // player code
             }
         }
     }
-
-
     // Update is called once per frame for physics
     void Update()
     {
@@ -105,7 +109,7 @@ public class MainPlayerMovement : MonoBehaviour // player code
 
         if (grounded)
         {
-            ChargeHandler(); // Check if the player is charging
+            ChargeHandler(); // Checks if the player is charging
             if (charging)
             {
                 ChargeAnimation();
@@ -231,12 +235,22 @@ public class MainPlayerMovement : MonoBehaviour // player code
     {
         if (!grounded && collFloorDir == 'D' && Physics2D.BoxCast(playerCOLL.bounds.center, playerCOLL.bounds.size, 0f, Vector2.down, 0.05f, environmentLayerMask))
         {
-            jumpForce = 0;
-            jumpingDir = 0;
-            playerRB.velocity = new Vector2(0, playerRB.velocity.y);
+            // landed
+            LandHandler();
         }
         
         return (collFloorDir == 'D' && Physics2D.BoxCast(playerCOLL.bounds.center, playerCOLL.bounds.size, 0f, Vector2.down, 0.05f, environmentLayerMask));
+    }
+    void LandHandler()
+    {
+        CreateSplash(); // makes the little puddel of juice when landing
+        jumpForce = 0;
+        jumpingDir = 0;
+        playerRB.velocity = new Vector2(0, playerRB.velocity.y);
+    }
+    void CreateSplash()
+    {
+        Instantiate(LandingSplash, playerCOLL.bounds.min, playerTRANS.rotation);
     }
     void JumpHandler() // the function for jumping 
     {
@@ -267,10 +281,6 @@ public class MainPlayerMovement : MonoBehaviour // player code
             }
             else playerRB.AddForce(Vector2.up * jumpForce, ForceMode2D.Impulse);
         }
-    }
-    void OnTriggerStay2D(Collider2D collision)
-    {
-        if (collision.gameObject.tag == "Juice") onJuice = true;
     }
     void OnCollisionStay2D(Collision2D collision)
     {
@@ -313,7 +323,18 @@ public class MainPlayerMovement : MonoBehaviour // player code
             }
         }
     }
-    
+    private void OnCollisionExit2D(Collision2D collision)
+    {
+        if (collision.gameObject.tag == "Ground" && !Physics2D.BoxCast(playerCOLL.bounds.center, playerCOLL.bounds.size, 0f, Vector2.down, 0.05f, environmentLayerMask))
+        {
+            collFloorDir = 'N';
+        }
+    }
+    void OnTriggerStay2D(Collider2D collision)
+    {
+        if (collision.gameObject.tag == "Juice") onJuice = true;
+        if (collision.gameObject.tag =="Splashed juice") onTempJuice = true;
+    }
     private void OnTriggerExit2D(Collider2D collision)
     {
         if (collision.gameObject.tag == "Juice") onJuice = false;
