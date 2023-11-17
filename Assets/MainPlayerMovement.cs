@@ -18,6 +18,7 @@ public class MainPlayerMovement : MonoBehaviour // player code
     public LayerMask environmentLayerMask; // Layer for boxcast to hit
     public ParticleSystem playerGroundSamsh;
     public GameObject LandingSplash;
+    public GameObject onSplash;
 
     public Vector3 idleScaleChange; // The unit of change idle animation 
     public Vector3 curNormScale; // The current normal scale of the player
@@ -133,18 +134,33 @@ public class MainPlayerMovement : MonoBehaviour // player code
             InAirMovementHandler(jumpingDir);
         }
 
-        if (onJuice)
+        if (onJuice || onTempJuice)
         {
             GrowHandler();
         }
     }
     void GrowHandler()
     {
-        if (Input.GetKey(SuckKey))
+        if (onTempJuice)
         {
-            if(juiceAmount < 100f)
+            if (Input.GetKey(SuckKey))
             {
-                juiceAmount += (suckSpeed * Time.deltaTime);
+                if (juiceAmount < 100f)
+                {
+                    juiceAmount += 5;
+                    //Destroy(onSplash);
+                }
+                onTempJuice = false;
+            }
+        }
+        else if (onJuice)
+        {
+            if (Input.GetKey(SuckKey))
+            {
+                if (juiceAmount < 100f)
+                {
+                    juiceAmount += (suckSpeed * Time.deltaTime);
+                }
             }
         }
     }
@@ -243,8 +259,11 @@ public class MainPlayerMovement : MonoBehaviour // player code
     }
     void LandHandler()
     {
-        if(canDecrease)
+        if (juiceAmount > 0f && canDecrease)
         {
+            playerGroundSamsh.Play();
+            canDecrease = false;
+            juiceAmount -= 5f;
             CreateSplash(); // makes the little puddle of juice when landing
         }
         jumpForce = 0;
@@ -292,12 +311,6 @@ public class MainPlayerMovement : MonoBehaviour // player code
             if (Physics2D.BoxCast(playerCOLL.bounds.center, playerCOLL.bounds.size, 0f, Vector2.down, 0.05f, environmentLayerMask))
             {
                 collFloorDir = 'D';
-                if (juiceAmount > 0f && canDecrease)
-                {
-                    playerGroundSamsh.Play();
-                    canDecrease = false;
-                    juiceAmount -= 5f;
-                }
                 Debug.Log("The ground is below me.");
             }
             else if (Physics2D.BoxCast(playerCOLL.bounds.center, playerCOLL.bounds.size, 0f, Vector2.up, 0.05f, environmentLayerMask))
@@ -325,6 +338,12 @@ public class MainPlayerMovement : MonoBehaviour // player code
                 Debug.Log("The ground is on my right.");
             }
         }
+        if (collision.gameObject.tag == "Splashed juice")
+        {
+            Debug.LogWarning("On temp juice!");
+            onSplash = collision.gameObject;
+            onTempJuice = true;
+        }
     }
     private void OnCollisionExit2D(Collision2D collision)
     {
@@ -332,11 +351,15 @@ public class MainPlayerMovement : MonoBehaviour // player code
         {
             collFloorDir = 'N';
         }
+        if (collision.gameObject.tag == "Splashed juice")
+        {
+            Debug.LogWarning("Leave temp juice!");
+            onTempJuice = true;
+        }
     }
     void OnTriggerStay2D(Collider2D collision)
     {
-        if (collision.gameObject.tag == "Juice") onJuice = true;
-        if (collision.gameObject.tag =="Splashed juice") onTempJuice = true;
+        if (collision.gameObject.tag == "Juice") onJuice = true; 
     }
     private void OnTriggerExit2D(Collider2D collision)
     {
