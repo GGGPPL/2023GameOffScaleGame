@@ -148,7 +148,7 @@ public class MainPlayerMovement : MonoBehaviour // player code
                 if (juiceAmount < 100f)
                 {
                     juiceAmount += 5;
-                    //Destroy(onSplash);
+                    Destroy(onSplash);
                 }
                 onTempJuice = false;
             }

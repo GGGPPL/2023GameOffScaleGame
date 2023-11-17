@@ -17,7 +17,7 @@ public class SettingsUILogic : MonoBehaviour
 
     private TextField mainVolumeTextField;
     private Slider mainVolumeSlider;
-    private int mainVolumeValue;
+    public int mainVolumeValue; //SettingsUILogic.instace.mainVolumeValue
 
     private Button leftKeyButton;
     private Button rightKeyButton;
