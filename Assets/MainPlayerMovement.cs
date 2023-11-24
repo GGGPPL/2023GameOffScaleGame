@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Collections.Specialized;
@@ -16,8 +17,8 @@ public class MainPlayerMovement : MonoBehaviour // player code
     public SpriteRenderer playerSP;
     public Transform playerTRANS;
     public LayerMask environmentLayerMask; // Layer for boxcast to hit
+    public GameObject juiceVacuum;
     public ParticleSystem playerGroundSamsh;
-    public GameObject LandingSplash;
     public GameObject onSplash;
 
     public Vector3 idleScaleChange; // The unit of change idle animation 
@@ -37,10 +38,13 @@ public class MainPlayerMovement : MonoBehaviour // player code
     public float juiceAmount;
     public float suckSpeed; //  Suck juice per second
     public float decreasePerJump;
+    public float groundCheckTimer;
 
     public bool charging; // Charging or not
     public bool rebounding; // Rebounding or not
     public bool grounded;
+    public bool groundSub1;
+    public bool groundSub2;
     public bool facingRight;
     public bool onJuice; // If the player is on a juice source
     public bool onTempJuice; // If the player is on a temp pud of juice that can be sucked back
@@ -58,16 +62,35 @@ public class MainPlayerMovement : MonoBehaviour // player code
     // Use this for initialization
     void Awake()
     {
-        JumpKey = SettingsUILogic.instance.jumpKey;
-        LeftKey = SettingsUILogic.instance.leftKey;
-        RightKey = SettingsUILogic.instance.rightKey;
-        SuckKey = SettingsUILogic.instance.interactKey;
+        try
+        {
+            JumpKey = SettingsUILogic.instance.jumpKey;
+            LeftKey = SettingsUILogic.instance.leftKey;
+            RightKey = SettingsUILogic.instance.rightKey;
+            SuckKey = SettingsUILogic.instance.interactKey;
+        }
+        catch (Exception ex)
+        {
+            Debug.LogWarning("Settings from UI cannot be fetched!");
+            Debug.LogWarning("Settings are now on default");
+            Debug.LogWarning("jump : space bar");
+            Debug.LogWarning("left : A");
+            Debug.LogWarning("Right : D");
+            Debug.LogWarning("interact : S");
+            JumpKey = KeyCode.Space;
+            LeftKey = KeyCode.A;
+            RightKey = KeyCode.D;
+            SuckKey = KeyCode.S;
+        }
+
 
         playerTRANS = GetComponent<Transform>();
         playerCOLL = GetComponent<BoxCollider2D>();
         playerRB = GetComponent<Rigidbody2D>();
         playerSP = GetComponent<SpriteRenderer>();
-        LandingSplash = GameObject.FindGameObjectWithTag("Splashed juice");
+        playerGroundSamsh = GetComponentInChildren<ParticleSystem>();
+        juiceVacuum = transform.Find("Juice collector").gameObject;
+        juiceVacuum.SetActive(false);
         environmentLayerMask = LayerMask.GetMask("Ground");
 
         charging = false;
@@ -90,26 +113,23 @@ public class MainPlayerMovement : MonoBehaviour // player code
         suckSpeed = 50f;
         decreasePerJump = 5f;
         canDecrease = false;
-        foreach (Transform child in transform)
-        {
-            if (child.tag == "Visuals")
-            {
-                playerGroundSamsh = child.gameObject.GetComponent<ParticleSystem>();
-            }
-        }
+
     }
     // Update is called once per frame for physics
     void Update()
     {
-        // map the current normal scale according to the juice amount
+        // Map the current normal scale according to the juice amount
         curNormScale.x = Map(0f, 100f, minNormScale.x, maxNormScale.x, juiceAmount);
         curNormScale.y = Map(0f, 100f, minNormScale.y, maxNormScale.y, juiceAmount);
         curNormScale.z = Map(0f, 100f, minNormScale.z, maxNormScale.z, juiceAmount);
+        // Map the juice particle size according to the juice amount
+        playerGroundSamsh.startSize = Map(0f, 100f, 0.3f, 0.85f, juiceAmount);
         
         grounded = CheckGrounded();
 
         if (grounded)
         {
+            GrowHandler();
             ChargeHandler(); // Checks if the player is charging
             if (charging)
             {
@@ -126,6 +146,7 @@ public class MainPlayerMovement : MonoBehaviour // player code
         }
         if (!grounded)
         {
+            juiceVacuum.SetActive(false);
             if (rebounding)
             {
                 ReboundAnimation();
@@ -134,26 +155,16 @@ public class MainPlayerMovement : MonoBehaviour // player code
             InAirMovementHandler(jumpingDir);
         }
 
-        if (onJuice || onTempJuice)
-        {
-            GrowHandler();
-        }
     }
     void GrowHandler()
     {
-        if (onTempJuice)
+        if (Input.GetKey(SuckKey) && juiceAmount < 100f)
         {
-            if (Input.GetKey(SuckKey))
-            {
-                if (juiceAmount < 100f)
-                {
-                    juiceAmount += 5;
-                    Destroy(onSplash);
-                }
-                onTempJuice = false;
-            }
+            juiceVacuum.SetActive(true);
         }
-        else if (onJuice)
+        else juiceVacuum.SetActive(false);
+
+        if (onJuice)
         {
             if (Input.GetKey(SuckKey))
             {
@@ -249,6 +260,11 @@ public class MainPlayerMovement : MonoBehaviour // player code
     }
     bool CheckGrounded()
     {
+        //if(collFloorDir == 'D' && Physics2D.BoxCast(playerCOLL.bounds.center, playerCOLL.bounds.size, 0f, Vector2.down, 0.05f, environmentLayerMask))
+        //{
+        //    groundSub1 = true;
+        //    groundCheckTimer = 0f;
+        //}
         if (!grounded && collFloorDir == 'D' && Physics2D.BoxCast(playerCOLL.bounds.center, playerCOLL.bounds.size, 0f, Vector2.down, 0.05f, environmentLayerMask))
         {
             // landed
@@ -263,7 +279,7 @@ public class MainPlayerMovement : MonoBehaviour // player code
         {
             playerGroundSamsh.Play();
             canDecrease = false;
-            juiceAmount -= 5f;
+            juiceAmount -= decreasePerJump;
             CreateSplash(); // makes the little puddle of juice when landing
         }
         jumpForce = 0;
@@ -272,7 +288,7 @@ public class MainPlayerMovement : MonoBehaviour // player code
     }
     void CreateSplash()
     {
-        Instantiate(LandingSplash, playerCOLL.bounds.min, playerTRANS.rotation);
+        playerGroundSamsh.Play();
     }
     void JumpHandler() // the function for jumping 
     {
@@ -338,23 +354,13 @@ public class MainPlayerMovement : MonoBehaviour // player code
                 Debug.Log("The ground is on my right.");
             }
         }
-        if (collision.gameObject.tag == "Splashed juice")
-        {
-            Debug.LogWarning("On temp juice!");
-            onSplash = collision.gameObject;
-            onTempJuice = true;
-        }
+
     }
     private void OnCollisionExit2D(Collision2D collision)
     {
         if (collision.gameObject.tag == "Ground" && !Physics2D.BoxCast(playerCOLL.bounds.center, playerCOLL.bounds.size, 0f, Vector2.down, 0.05f, environmentLayerMask))
         {
             collFloorDir = 'N';
-        }
-        if (collision.gameObject.tag == "Splashed juice")
-        {
-            Debug.LogWarning("Leave temp juice!");
-            onTempJuice = true;
         }
     }
     void OnTriggerStay2D(Collider2D collision)
