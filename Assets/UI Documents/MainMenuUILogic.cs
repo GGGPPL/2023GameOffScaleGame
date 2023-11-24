@@ -38,7 +38,7 @@ public class MainMenuUILogic : MonoBehaviour
 
     void newGameButtonPressed() 
     {
-        LoadingUILogic.instance.addScenesToLaod("SampleScene");
+        LoadingUILogic.instance.addScenesToLaod("stage1");
         LoadingUILogic.instance.loadScenes();
         Debug.Log("newGameButtonPressed");
     }
