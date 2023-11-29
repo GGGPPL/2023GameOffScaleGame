@@ -166,12 +166,9 @@ public class MainPlayerMovement : MonoBehaviour // player code
 
         if (onJuice)
         {
-            if (Input.GetKey(SuckKey))
+            if (Input.GetKey(SuckKey) && juiceAmount < 100f)
             {
-                if (juiceAmount < 100f)
-                {
-                    juiceAmount += (suckSpeed * Time.deltaTime);
-                }
+                juiceAmount += (suckSpeed * Time.deltaTime);
             }
         }
     }
