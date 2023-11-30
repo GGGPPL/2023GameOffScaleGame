@@ -27,8 +27,12 @@ public class SceneEnder : MonoBehaviour
             Time.timeScale = 0;
             curScene = SceneManager.GetActiveScene().name;
             // stageX
-            toScene = curScene.Substring(1, 5) + (System.Convert.ToInt32(curScene.Substring(6,6))+1);
-            SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+            // Debug.Log(curScene.Substring(0, 4));
+            // Debug.LogWarning(System.Convert.ToInt32(curScene.Substring(5))+1);
+            
+            LoadingUILogic.instance.addScenesToLaod(curScene.Substring(0, 5) + (System.Convert.ToInt32(curScene.Substring(5))+1));
+            LoadingUILogic.instance.loadScenes();
+            Time.timeScale = 1;
         }
     }
 }

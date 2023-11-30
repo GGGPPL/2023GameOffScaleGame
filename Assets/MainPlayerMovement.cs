@@ -108,7 +108,7 @@ public class MainPlayerMovement : MonoBehaviour // player code
         reboundScaleSpeed = 20;
         curNormScale = new Vector3(1f, 1f, 1f);
         minNormScale = new Vector3(0.5f, 0.5f, 0.5f);
-        maxNormScale = new Vector3(1.4f, 1.4f, 1.4f);
+        maxNormScale = new Vector3(1.6f, 1.6f, 1.6f);
         juiceAmount = 70f;
         suckSpeed = 50f;
         decreasePerJump = 5f;

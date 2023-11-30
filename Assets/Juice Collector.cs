@@ -22,7 +22,7 @@ public class JuiceCollector : MonoBehaviour
         
         int triggeredParticles = ps.GetTriggerParticles(ParticleSystemTriggerEventType.Enter, particles);
 
-        Debug.Log(triggeredParticles);
+        //Debug.Log(triggeredParticles);
 
         for (int i = 0; i < triggeredParticles; i++)
         {
