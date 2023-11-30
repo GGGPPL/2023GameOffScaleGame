@@ -2,9 +2,12 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class SceneEnder : MonoBehaviour
 {
+    private string curScene;
+    private string toScene;
     // Start is called before the first frame update
     void Start()
     {
@@ -22,6 +25,10 @@ public class SceneEnder : MonoBehaviour
         if(other.tag  == "Player")
         {
             Time.timeScale = 0;
+            curScene = SceneManager.GetActiveScene().name;
+            // stageX
+            toScene = curScene.Substring(1, 5) + (System.Convert.ToInt32(curScene.Substring(6,6))+1);
+            SceneManager.LoadScene(SceneManager.GetActiveScene().name);
         }
     }
 }
