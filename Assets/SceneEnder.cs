@@ -17,9 +17,17 @@ public class SceneEnder : MonoBehaviour
     void Awake()
     {
         Player = GameObject.FindGameObjectWithTag("Player");
-        playerTRANS = Player.GetComponent<Transform>();
-        playerCOLL = Player.GetComponent<BoxCollider2D>();
-        playerRB = Player.GetComponent<Rigidbody2D>();
+
+        if (Player != null)
+        {
+            playerTRANS = Player.GetComponent<Transform>();
+            playerCOLL = Player.GetComponent<BoxCollider2D>();
+            playerRB = Player.GetComponent<Rigidbody2D>();
+        }
+        else
+        {
+            Debug.LogError("Player object not found!");
+        }
     }
 
     // Update is called once per frame
