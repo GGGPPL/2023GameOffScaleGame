@@ -9,6 +9,7 @@ TagManager:
   - Visuals
   - Splashed juice
   - END
+  - Border
   layers:
   - Default
   - TransparentFX

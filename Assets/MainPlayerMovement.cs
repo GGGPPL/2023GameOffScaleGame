@@ -342,7 +342,7 @@ public class MainPlayerMovement : MonoBehaviour // player code
     }
     void OnCollisionStay2D(Collision2D collision)
     {
-        if (collision.gameObject.tag == "Ground" )
+        if (collision.gameObject.tag == "Ground" || collision.gameObject.tag == "Border" )
         {
             if (Physics2D.BoxCast(playerCOLL.bounds.center, playerCOLL.bounds.size, 0f, Vector2.down, 0.05f, environmentLayerMask))
             {
