@@ -25,6 +25,12 @@ public class FollowPlayer : MonoBehaviour
         target = GameObject.FindGameObjectWithTag("Player");
         targetTRANS = target.transform;
         permXPos = transform.position.x;
+        float spawnY;
+        if( PlayerPrefs.GetString("PlayerDirection") == "in")
+        {
+            transform.position =  Vector3(permXPos, endTriggerTRANS.position.y - camera.orthographicSize - 2f, -10f);
+        }
+
 
             lowestPosInScene = 0.45f;
 

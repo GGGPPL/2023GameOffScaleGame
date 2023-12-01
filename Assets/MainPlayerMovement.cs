@@ -125,7 +125,7 @@ public class MainPlayerMovement : MonoBehaviour // player code
         }
         else
         {
-            spawnY = endTrigTRANS.position.y + 0.5f;
+            spawnY = endTrigTRANS.position.y + -2f;
         }
         juiceAmount = PlayerPrefs.GetFloat("PlayerJuice");
         playerRB.velocity = new Vector2(PlayerPrefs.GetFloat("PlayerVelocityX"), PlayerPrefs.GetFloat("PlayerValocityY"));
