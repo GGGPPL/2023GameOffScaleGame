@@ -25,14 +25,8 @@ public class FollowPlayer : MonoBehaviour
         target = GameObject.FindGameObjectWithTag("Player");
         targetTRANS = target.transform;
         permXPos = transform.position.x;
-        if(SceneManager.GetActiveScene().name == "stage1")
-        {
-            lowestPosInScene = 7.4f;
-        }
-        if(SceneManager.GetActiveScene().name == "dtage2")
-        {
+
             lowestPosInScene = -0.4f;
-        }
 
     }
 

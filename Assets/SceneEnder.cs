@@ -29,13 +29,21 @@ public class SceneEnder : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D other)
     {
-
-        PlayerPrefs.SetFloat("PlayerVelocityX", playerRB.velocity.x);
-        PlayerPrefs.SetFloat("PlayerValocityY", playerRB.velocity.y);
-        PlayerPrefs.SetFloat("PlayerPositionX", playerTRANS.position.x);
-
         if(other.tag  == "Player")
         {
+            if(playerTRANS.position.y < transform.position.y)
+            {
+                PlayerPrefs.SetString("PlayerDirection", "out");
+            }
+            else
+            {
+                PlayerPrefs.SetString("PlayerDirection", "in");
+            }
+            
+            PlayerPrefs.SetFloat("PlayerVelocityX", playerRB.velocity.x);
+            PlayerPrefs.SetFloat("PlayerValocityY", playerRB.velocity.y);
+            PlayerPrefs.SetFloat("PlayerPositionX", playerTRANS.position.x);
+            PlayerPrefs.SetFloat("PlayerJuice", Player.GetComponent<MainPlayerMovement>().juiceAmount);
             Time.timeScale = 0;
             curScene = SceneManager.GetActiveScene().name;
             // stageX

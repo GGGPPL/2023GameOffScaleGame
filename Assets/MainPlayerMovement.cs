@@ -8,6 +8,7 @@ using UnityEditor;
 using UnityEditor.Sprites;
 using UnityEditor.Tilemaps;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using static Unity.VisualScripting.Metadata;
 
 public class MainPlayerMovement : MonoBehaviour // player code
@@ -113,11 +114,10 @@ public class MainPlayerMovement : MonoBehaviour // player code
         suckSpeed = 50f;
         decreasePerJump = 5f;
         canDecrease = false;
-
-        playerRB.velocity = new Vector2(PlayerPrefs.GetFloat("PlayerVelocityX"), PlayerPrefs.GetFloat("PlayerValocityY"));
-        PlayerPrefs.GetFloat("PlayerPositionX", playerTRANS.position.x);
-        PlayerPrefs.GetFloat("PlayerPositionX", playerTRANS.position.x);
         
+        juiceAmount = PlayerPrefs.GetFloat("PlayerJuice");
+        playerRB.velocity = new Vector2(PlayerPrefs.GetFloat("PlayerVelocityX"), PlayerPrefs.GetFloat("PlayerValocityY"));
+        playerTRANS.position = new Vector3(PlayerPrefs.GetFloat("PlayerPositionX", playerTRANS.position.x), -9.1f, 0);
     }
     // Update is called once per frame for physics
     void Update()
