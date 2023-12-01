@@ -135,7 +135,7 @@ GameObject:
   - component: {fileID: 61599051}
   m_Layer: 0
   m_Name: border2
-  m_TagString: Untagged
+  m_TagString: Border
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -212,7 +212,7 @@ GameObject:
   - component: {fileID: 315186558}
   m_Layer: 0
   m_Name: border1
-  m_TagString: Untagged
+  m_TagString: Border
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -8736,6 +8736,7 @@ MonoBehaviour:
   playerCOLL: {fileID: 0}
   playerSP: {fileID: 0}
   playerTRANS: {fileID: 0}
+  endTrigTRANS: {fileID: 0}
   environmentLayerMask:
     serializedVersion: 2
     m_Bits: 8
