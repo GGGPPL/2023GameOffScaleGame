@@ -133,7 +133,7 @@ GameObject:
   m_Component:
   - component: {fileID: 61599052}
   - component: {fileID: 61599051}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: border2
   m_TagString: Border
   m_Icon: {fileID: 0}
@@ -210,7 +210,7 @@ GameObject:
   m_Component:
   - component: {fileID: 315186557}
   - component: {fileID: 315186558}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: border1
   m_TagString: Border
   m_Icon: {fileID: 0}
