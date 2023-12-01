@@ -12,6 +12,7 @@ public class SceneEnder : MonoBehaviour
     public BoxCollider2D playerCOLL;
     public Transform playerTRANS;
     private string toScene;
+    private bool isOut;
     // Start is called before the first frame update
     void Awake()
     {
@@ -34,10 +35,12 @@ public class SceneEnder : MonoBehaviour
             if(playerTRANS.position.y < transform.position.y)
             {
                 PlayerPrefs.SetString("PlayerDirection", "out");
+                isOut = true;
             }
             else
             {
                 PlayerPrefs.SetString("PlayerDirection", "in");
+                isOut = false;
             }
             
             PlayerPrefs.SetFloat("PlayerVelocityX", playerRB.velocity.x);
@@ -49,8 +52,14 @@ public class SceneEnder : MonoBehaviour
             // stageX
             // Debug.Log(curScene.Substring(0, 4));
             // Debug.LogWarning(System.Convert.ToInt32(curScene.Substring(5))+1);
-            
-            LoadingUILogic.instance.addScenesToLaod(curScene.Substring(0, 5) + (System.Convert.ToInt32(curScene.Substring(5))+1));
+            if(isOut)
+            {
+                LoadingUILogic.instance.addScenesToLaod(curScene.Substring(0, 5) + (System.Convert.ToInt32(curScene.Substring(5))+1));
+            }
+            else
+            {
+                LoadingUILogic.instance.addScenesToLaod(curScene.Substring(0, 5) + (System.Convert.ToInt32(curScene.Substring(5))-1));
+            }
             LoadingUILogic.instance.loadScenes();
             Time.timeScale = 1;
         }

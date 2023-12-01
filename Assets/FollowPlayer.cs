@@ -26,7 +26,7 @@ public class FollowPlayer : MonoBehaviour
         targetTRANS = target.transform;
         permXPos = transform.position.x;
 
-            lowestPosInScene = -0.4f;
+            lowestPosInScene = -0.35f;
 
     }
 

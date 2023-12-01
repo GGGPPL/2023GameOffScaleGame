@@ -17,6 +17,7 @@ public class MainPlayerMovement : MonoBehaviour // player code
     public BoxCollider2D playerCOLL;
     public SpriteRenderer playerSP;
     public Transform playerTRANS;
+    public Transform endTrigTRANS;
     public LayerMask environmentLayerMask; // Layer for boxcast to hit
     public GameObject juiceVacuum;
     public ParticleSystem playerGroundSamsh;
@@ -93,6 +94,7 @@ public class MainPlayerMovement : MonoBehaviour // player code
         juiceVacuum = transform.Find("Juice collector").gameObject;
         juiceVacuum.SetActive(false);
         environmentLayerMask = LayerMask.GetMask("Ground");
+        endTrigTRANS = GameObject.FindGameObjectWithTag("END").GetComponent<Transform>();
 
         charging = false;
         grounded = false;
@@ -115,9 +117,25 @@ public class MainPlayerMovement : MonoBehaviour // player code
         decreasePerJump = 5f;
         canDecrease = false;
         
+
+        float spawnY;
+        if( PlayerPrefs.GetString("PlayerDirection") == "out")
+        {
+            spawnY = -9.1f;
+        }
+        else
+        {
+            spawnY = endTrigTRANS.position.y + 0.5f;
+        }
         juiceAmount = PlayerPrefs.GetFloat("PlayerJuice");
         playerRB.velocity = new Vector2(PlayerPrefs.GetFloat("PlayerVelocityX"), PlayerPrefs.GetFloat("PlayerValocityY"));
-        playerTRANS.position = new Vector3(PlayerPrefs.GetFloat("PlayerPositionX", playerTRANS.position.x), -9.1f, 0);
+        playerTRANS.position = new Vector3(PlayerPrefs.GetFloat("PlayerPositionX", playerTRANS.position.x), spawnY, 0);
+        // Map the current normal scale according to the juice amount
+        curNormScale.x = Map(0f, 100f, minNormScale.x, maxNormScale.x, juiceAmount);
+        curNormScale.y = Map(0f, 100f, minNormScale.y, maxNormScale.y, juiceAmount);
+        curNormScale.z = Map(0f, 100f, minNormScale.z, maxNormScale.z, juiceAmount);
+        playerTRANS.localScale = curNormScale;
+
     }
     // Update is called once per frame for physics
     void Update()
@@ -324,7 +342,7 @@ public class MainPlayerMovement : MonoBehaviour // player code
     }
     void OnCollisionStay2D(Collision2D collision)
     {
-        if (collision.gameObject.tag == "Ground" )
+        if (collision.gameObject.tag == "Ground" || collision.gameObject.tag == "Border" )
         {
             if (Physics2D.BoxCast(playerCOLL.bounds.center, playerCOLL.bounds.size, 0f, Vector2.down, 0.05f, environmentLayerMask))
             {
