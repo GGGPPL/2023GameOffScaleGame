@@ -28,11 +28,11 @@ public class FollowPlayer : MonoBehaviour
         float spawnY;
         if( PlayerPrefs.GetString("PlayerDirection") == "in")
         {
-            transform.position =  Vector3(permXPos, endTriggerTRANS.position.y - camera.orthographicSize - 2f, -10f);
+            transform.position =  new Vector3(permXPos, endTriggerTRANS.position.y - camera.orthographicSize - 2f, -10f);
         }
 
 
-            lowestPosInScene = 0.45f;
+            lowestPosInScene = -1.5f;
 
     }
 
