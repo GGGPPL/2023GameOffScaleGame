@@ -54,6 +54,7 @@ public class SceneEnder : MonoBehaviour
             // Debug.LogWarning(System.Convert.ToInt32(curScene.Substring(5))+1);
             if(isOut)
             {
+                Debug.Log(curScene.Substring(0, 5) + (System.Convert.ToInt32(curScene.Substring(5))+1));
                 LoadingUILogic.instance.addScenesToLaod(curScene.Substring(0, 5) + (System.Convert.ToInt32(curScene.Substring(5))+1));
             }
             else
