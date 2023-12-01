@@ -114,6 +114,10 @@ public class MainPlayerMovement : MonoBehaviour // player code
         decreasePerJump = 5f;
         canDecrease = false;
 
+        playerRB.velocity = new Vector2(PlayerPrefs.GetFloat("PlayerVelocityX"), PlayerPrefs.GetFloat("PlayerValocityY"));
+        PlayerPrefs.GetFloat("PlayerPositionX", playerTRANS.position.x);
+        PlayerPrefs.GetFloat("PlayerPositionX", playerTRANS.position.x);
+        
     }
     // Update is called once per frame for physics
     void Update()
@@ -156,6 +160,7 @@ public class MainPlayerMovement : MonoBehaviour // player code
         }
 
     }
+    
     void GrowHandler()
     {
         if (Input.GetKey(SuckKey) && juiceAmount < 100f)

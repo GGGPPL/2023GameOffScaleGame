@@ -7,11 +7,18 @@ using UnityEngine.SceneManagement;
 public class SceneEnder : MonoBehaviour
 {
     private string curScene;
+    public GameObject Player;
+    public Rigidbody2D playerRB;
+    public BoxCollider2D playerCOLL;
+    public Transform playerTRANS;
     private string toScene;
     // Start is called before the first frame update
-    void Start()
+    void Awake()
     {
-        
+        Player = GameObject.FindGameObjectWithTag("Player");
+        playerTRANS = Player.GetComponent<Transform>();
+        playerCOLL = Player.GetComponent<BoxCollider2D>();
+        playerRB = Player.GetComponent<Rigidbody2D>();
     }
 
     // Update is called once per frame
@@ -22,6 +29,11 @@ public class SceneEnder : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D other)
     {
+
+        PlayerPrefs.SetFloat("PlayerVelocityX", playerRB.velocity.x);
+        PlayerPrefs.SetFloat("PlayerValocityY", playerRB.velocity.y);
+        PlayerPrefs.SetFloat("PlayerPositionX", playerTRANS.position.x);
+
         if(other.tag  == "Player")
         {
             Time.timeScale = 0;
