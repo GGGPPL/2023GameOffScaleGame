@@ -134,6 +134,7 @@ public class MainPlayerMovement : MonoBehaviour // player code
         curNormScale.x = Map(0f, 100f, minNormScale.x, maxNormScale.x, juiceAmount);
         curNormScale.y = Map(0f, 100f, minNormScale.y, maxNormScale.y, juiceAmount);
         curNormScale.z = Map(0f, 100f, minNormScale.z, maxNormScale.z, juiceAmount);
+        playerTRANS.localScale = curNormScale;
 
     }
     // Update is called once per frame for physics
