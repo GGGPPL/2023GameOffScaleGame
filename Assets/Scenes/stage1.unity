@@ -3885,6 +3885,7 @@ GameObject:
   - component: {fileID: 671322039}
   - component: {fileID: 671322038}
   - component: {fileID: 671322040}
+  - component: {fileID: 671322041}
   m_Layer: 0
   m_Name: finger
   m_TagString: Untagged
@@ -4044,6 +4045,19 @@ PolygonCollider2D:
       - {x: 0.35548538, y: -0.16715798}
       - {x: 0.4580935, y: -0.14906433}
   m_UseDelaunayMesh: 0
+--- !u!114 &671322041
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 671322036}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 273f903a444f1b14ab63ce4cb2326e48, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  activate: 0
 --- !u!1 &685150878
 GameObject:
   m_ObjectHideFlags: 0
