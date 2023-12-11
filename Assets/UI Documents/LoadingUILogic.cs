@@ -9,7 +9,7 @@ public class LoadingUILogic : MonoBehaviour
 {
     public static LoadingUILogic instance;
 
-    private UIDocument uiDocument;
+    public UIDocument uiDocument;
     private ProgressBar progressBar;
 
     List<AsyncOperation> scenesToLoad = new List<AsyncOperation>();
@@ -30,8 +30,6 @@ public class LoadingUILogic : MonoBehaviour
     void Start()
     {
         uiDocument = GetComponent<UIDocument>();
-        var root = uiDocument.rootVisualElement;
-        progressBar = root.Q<ProgressBar>("loadingProgressBar");
 
         uiDocument.enabled = false;
     }
@@ -39,7 +37,16 @@ public class LoadingUILogic : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
- 
+        
+    }
+
+    void subscribeToEvents()
+    {
+        Debug.Log("EventsSubscribed");
+        uiDocument = GetComponent<UIDocument>();
+        var root = uiDocument.rootVisualElement;
+        progressBar = root.Q<ProgressBar>("loadingProgressBar");
+
     }
 
     public void addScenesToLaod(string sceneName)
@@ -50,6 +57,7 @@ public class LoadingUILogic : MonoBehaviour
     public void loadScenes()
     {
         uiDocument.enabled = true;
+        subscribeToEvents();
         StartCoroutine(loadingProgressBar());
         IEnumerator loadingProgressBar()
         {

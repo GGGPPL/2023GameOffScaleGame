@@ -6,6 +6,8 @@ using UnityEngine.SceneManagement;
 
 public class MainMenuUILogic : MonoBehaviour
 {
+    private bool inGame;
+
     private UIDocument uiDocument;
     private Button newGameButton;
     private Button continueButton;
@@ -29,6 +31,8 @@ public class MainMenuUILogic : MonoBehaviour
         historyButton.clicked += historyButtonPressed;
         settingsButton.clicked += settingsButtonPressed;
         quitButton.clicked += quitButtonPressed;
+
+        inGame = PlayerPrefs.GetInt("inGame", 0) == 0 ? false : true;
     }
 
     // Update is called once per frame
@@ -38,25 +42,57 @@ public class MainMenuUILogic : MonoBehaviour
 
     void newGameButtonPressed() 
     {
-        LoadingUILogic.instance.addScenesToLaod("SampleScene");
-        LoadingUILogic.instance.loadScenes();
         Debug.Log("newGameButtonPressed");
+        if (!inGame)
+        {
+            inGame = true;
+            PlayerPrefs.SetInt("inGame", 1);
+            LoadingUILogic.instance.addScenesToLaod("Game"); //scene 1
+            LoadingUILogic.instance.loadScenes();
+            HistoryUILogic.instance.createStopwatch();
+            HistoryUILogic.instance.plusTotalTime();
+            HistoryUILogic.instance.stopwatch.start();
+        }
+        else
+        {
+            LoadingUILogic.instance.addScenesToLaod("Game"); //scene 1
+            LoadingUILogic.instance.loadScenes();
+            HistoryUILogic.instance.resetSavedStopwatchTime();
+            HistoryUILogic.instance.createStopwatch();
+            HistoryUILogic.instance.plusTotalTime();
+            HistoryUILogic.instance.stopwatch.start();
+        }
+        
     }
 
     void continueButtonPressed() 
     {
         Debug.Log("continueButtonPressed");
+        if (inGame)
+        {
+            LoadingUILogic.instance.addScenesToLaod("Game"); //playerPrefs scene
+            LoadingUILogic.instance.loadScenes();
+            HistoryUILogic.instance.createStopwatch();
+            HistoryUILogic.instance.plusTotalTime();
+            HistoryUILogic.instance.stopwatch.start();
+        }
+        else
+        {
+            //do nothing
+        }
+        
     }
 
     void historyButtonPressed() 
     {
         Debug.Log("historyButtonPressed");
+        HistoryUILogic.instance.uiDocument.enabled = true;   
     }
 
     void settingsButtonPressed() 
     {
-        SettingsUILogic.instance.uiDocument.enabled = !SettingsUILogic.instance.uiDocument.enabled;
         Debug.Log("settingsButtonPressed");
+        SettingsUILogic.instance.uiDocument.enabled = true;
     }
 
     void quitButtonPressed() 

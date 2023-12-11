@@ -14,6 +14,7 @@ public class SettingsUILogic : MonoBehaviour
     public UIDocument uiDocument;
     private VisualElement overlay;
     private Button closeButton;
+    private Button defaultButton;
 
     private TextField mainVolumeTextField;
     private Slider mainVolumeSlider;
@@ -32,6 +33,13 @@ public class SettingsUILogic : MonoBehaviour
     private string buttonText;
     private bool waitingForKey;
 
+    private Button inputOverlayToggleButton;
+    private Button timerDisplayToggleButton;
+    private VisualElement inputOverlayToggleActive;
+    private VisualElement timerDisplayToggleActive;
+    public bool inputOverlayEnabled;
+    public bool timerDisplayEnabled; 
+
     void Awake()
     {
         if (instance == null)
@@ -44,9 +52,7 @@ public class SettingsUILogic : MonoBehaviour
             Destroy(gameObject);
         }
 
-        instance = this;
-
-        getPlyerPrefs();
+        getPlayerPrefs();
     }
 
     // Start is called before the first frame update
@@ -70,13 +76,26 @@ public class SettingsUILogic : MonoBehaviour
             unSubscribeFromEvents();
     }
 
-    void getPlyerPrefs()
+    void getPlayerPrefs()
     {
         mainVolumeValue = PlayerPrefs.GetInt("mainVolumeValue", 100);
         leftKey = (KeyCode)System.Enum.Parse(typeof(KeyCode), PlayerPrefs.GetString("leftkey", "A"));
         rightKey = (KeyCode)System.Enum.Parse(typeof(KeyCode), PlayerPrefs.GetString("rightkey", "D"));
         jumpKey = (KeyCode)System.Enum.Parse(typeof(KeyCode), PlayerPrefs.GetString("jumpkey", "Space"));
         interactKey = (KeyCode)System.Enum.Parse(typeof(KeyCode), PlayerPrefs.GetString("interactkey", "E"));
+        inputOverlayEnabled = PlayerPrefs.GetInt("inputOverlayEnabled", 0) == 0 ? false : true;
+        timerDisplayEnabled = PlayerPrefs.GetInt("timerDisplayEnabled", 0) == 0 ? false : true;
+    }
+
+    void resetPlayerPrefs()
+    {
+        PlayerPrefs.SetInt("mainVolumeValue", 100);
+        PlayerPrefs.SetString("leftkey", "A");
+        PlayerPrefs.SetString("rightkey", "D");
+        PlayerPrefs.SetString("jumpkey", "Space");
+        PlayerPrefs.SetString("interactkey", "E");
+        PlayerPrefs.SetInt("inputOverlayEnabled", 0);
+        PlayerPrefs.SetInt("timerDisplayEnabled", 0);
     }
 
     void setPlayerPrefsValue()
@@ -87,6 +106,8 @@ public class SettingsUILogic : MonoBehaviour
         rightKeyButton.text = rightKey.ToString();
         jumpKeyButton.text = jumpKey.ToString();
         interactKeyButton.text = interactKey.ToString();
+        syncInputOverlayToggle();
+        syncTimerDisplayToggle();
     }
 
     void subscribeToEvents()
@@ -97,20 +118,28 @@ public class SettingsUILogic : MonoBehaviour
         uiDocument = GetComponent<UIDocument>();
         var root = uiDocument.rootVisualElement;
         closeButton = root.Q<Button>("closeButton");
+        defaultButton = root.Q<Button>("defaultButton");
         mainVolumeTextField = root.Q<TextField>("mainVolumeTextField");
         mainVolumeSlider = root.Q<Slider>("mainVolumeSlider");
         leftKeyButton = root.Q<Button>("leftKeyButton");
         rightKeyButton = root.Q<Button>("rightKeyButton");
         jumpKeyButton = root.Q<Button>("jumpKeyButton");
         interactKeyButton = root.Q<Button>("interactKeyButton");
+        inputOverlayToggleButton = root.Q<Button>("inputOverlayToggleButton");
+        timerDisplayToggleButton = root.Q<Button>("timerDisplayToggleButton");
+        inputOverlayToggleActive = root.Q<VisualElement>("inputOverlayToggleActive");
+        timerDisplayToggleActive = root.Q<VisualElement>("timerDisplayToggleActive");
 
+        closeButton.clicked += closeButtonPressed;
+        defaultButton.clicked += defaultButtonPressed;
         mainVolumeTextField.RegisterValueChangedCallback(onMainVolumeTextFieldValueChanged);
         mainVolumeSlider.RegisterValueChangedCallback(onMainVolumeSliderValueChanged);
-        closeButton.clicked += closeButtonPressed;
         leftKeyButton.clicked += leftkeyButtonPressed;
         rightKeyButton.clicked += rightkeyButtonPressed;
         jumpKeyButton.clicked += jumpKeyButtonPressed;
         interactKeyButton.clicked += interactKeyButtonPressed;
+        inputOverlayToggleButton.clicked += inputOverlayToggleButtonPressed;
+        timerDisplayToggleButton.clicked += timerDisplayToggleButtonPressed;
 
         setPlayerPrefsValue();
         createInterceptOverlay();
@@ -121,13 +150,16 @@ public class SettingsUILogic : MonoBehaviour
         Debug.Log("EventsUnSubscribed");
         eventsSubscribed = false;
 
+        closeButton.clicked -= closeButtonPressed;
+        defaultButton.clicked -= defaultButtonPressed;
         mainVolumeTextField.UnregisterValueChangedCallback(onMainVolumeTextFieldValueChanged);
         mainVolumeSlider.UnregisterValueChangedCallback(onMainVolumeSliderValueChanged);
-        closeButton.clicked -= closeButtonPressed;
         leftKeyButton.clicked -= leftkeyButtonPressed;
         rightKeyButton.clicked -= rightkeyButtonPressed;
         jumpKeyButton.clicked -= jumpKeyButtonPressed;
         interactKeyButton.clicked -= interactKeyButtonPressed;
+        inputOverlayToggleButton.clicked -= inputOverlayToggleButtonPressed;
+        timerDisplayToggleButton.clicked -= timerDisplayToggleButtonPressed;
     }
 
     void closeButtonPressed()
@@ -136,14 +168,22 @@ public class SettingsUILogic : MonoBehaviour
         uiDocument.enabled = false;
     }
 
+    void defaultButtonPressed()
+    {
+        Debug.Log("defaultButtonPressed");
+        resetPlayerPrefs();
+        getPlayerPrefs();
+        setPlayerPrefsValue();
+    }
+
     void onMainVolumeTextFieldValueChanged(ChangeEvent<string> evt)
     {
         string input = evt.newValue;
         if (int.TryParse(input, out int result))
         {
             mainVolumeValue = int.Parse(input);
-            syncMainVolume();
         }
+        syncMainVolume();
     }
     void onMainVolumeSliderValueChanged(ChangeEvent<float> evt)
     {
@@ -271,4 +311,49 @@ public class SettingsUILogic : MonoBehaviour
         disableInterceptOverlay();
         yield return null;
     }
+
+    void inputOverlayToggleButtonPressed()
+    {
+        Debug.Log("inputOverlayToggleButtonPressed");
+        inputOverlayEnabled = !inputOverlayEnabled;
+        PlayerPrefs.SetInt("inputOverlayEnabled", inputOverlayEnabled == true ? 1 : 0);
+        syncInputOverlayToggle();
+    }
+
+    void syncInputOverlayToggle()
+    {
+        if (inputOverlayEnabled)
+        {
+            inputOverlayToggleActive.SetEnabled(true);
+            inputOverlayToggleActive.visible = true;
+        }
+        else
+        {
+            inputOverlayToggleActive.visible = false;
+            inputOverlayToggleActive.SetEnabled(false);
+        }
+    }
+
+    void timerDisplayToggleButtonPressed()
+    {
+        Debug.Log("timerDisplayToggleButtonPressed");
+        timerDisplayEnabled = !timerDisplayEnabled;
+        PlayerPrefs.SetInt("timerDisplayEnabled", timerDisplayEnabled == true ? 1 : 0);
+        syncTimerDisplayToggle();
+    }
+
+    void syncTimerDisplayToggle()
+    {
+        if (timerDisplayEnabled)
+        {
+            timerDisplayToggleActive.SetEnabled(true);
+            timerDisplayToggleActive.visible = true;
+        }
+        else
+        {
+            timerDisplayToggleActive.visible = false;
+            timerDisplayToggleActive.SetEnabled(false);
+        }
+    }
 }
+
