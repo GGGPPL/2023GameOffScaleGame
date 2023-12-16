@@ -62,5 +62,6 @@ public class MainMenuUILogic : MonoBehaviour
     void quitButtonPressed() 
     {
         Debug.Log("quitButtonPressed");
+        Application.Quit();
     }
 }

@@ -5,11 +5,9 @@ using System.Collections.Specialized;
 using System.Globalization;
 using Unity.VisualScripting;
 using UnityEditor;
-using UnityEditor.Sprites;
-using UnityEditor.Tilemaps;
 using UnityEngine;
 using UnityEngine.SceneManagement;
-using static Unity.VisualScripting.Metadata;
+
 
 public class MainPlayerMovement : MonoBehaviour // player code
 {
