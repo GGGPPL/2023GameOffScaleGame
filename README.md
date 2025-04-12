@@ -10,10 +10,8 @@ it takes a lot of jumps to go up, but one failure is enough for you to fall to t
 
 - **Player Character**: A slime-like creature that can:
   - **Jump & Shrink**:
-
         some juice are splashed whenever you jump
   - **Grow**:
-
         collect juice from juice puddles or the juice you left to grow the slime
 
 - that's all, try and jump your way through to the end.
